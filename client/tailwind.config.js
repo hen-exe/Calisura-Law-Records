@@ -124,7 +124,7 @@ module.exports = {
       },
       },
       animation: {
-        'slide-down': 'slide-down 0.3s ease-out',
+        'slide-down': 'slide-down 2s ease-out',
         'zoom-in': 'zoom-in 0.6s ease-out',
         'zoom-in-end': 'zoom-in-end 0.8s ease-out',
         'swipe-down': 'swipe-down 3s ease-in-out infinite',
