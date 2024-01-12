@@ -1,14 +1,48 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { LuLogOut } from "react-icons/lu";
-import { IoSearchSharp } from "react-icons/io5";
-import { IoMdAddCircleOutline } from "react-icons/io";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { LuLogOut } from 'react-icons/lu';
+import { IoSearchSharp } from 'react-icons/io5';
+import { IoMdAddCircleOutline } from 'react-icons/io';
 import ClientCard from '../../components/card/clientCard.tsx';
 import NewClient from './newClient.tsx';
+import config from '../../common/config.ts';
+import axios from 'axios';
+
+interface ClientDetailsProps {
+  client_id: number;
+  client_name: string;
+  contact_number: string;
+  no_of_transactions: number;
+  account_status: string;
+}
+
+const ClientListComponent: React.FC = () => {
+  const [clients, setClients] = useState<ClientDetailsProps[]>([]);
+  const [errMess, setErrMess] = useState('');
+
+  useEffect(() => {
+    axios
+      .get(`${config.API}/user/retrieveAll`)
+      .then((res) => {
+        setClients(res.data.client);
+      })
+      .catch((err) => {
+        setErrMess(err.response?.data?.message || 'An error occurred');
+      });
+  }, []);
+
+  console.log('Clients:', clients);
+
+  return (
+    <div>
+      <ClientCard clients={clients} />
+      {errMess && <p>Error: {errMess}</p>}
+    </div>
+  );
+};
 
 const HomePage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const Navigate = useNavigate();
 
   const openModal = () => {
     setIsModalOpen(true);
@@ -60,7 +94,7 @@ const HomePage = () => {
       </div>
 
       {/* Client List */}
-      <ClientCard />
+      <ClientListComponent />
 
       {/* New Client Modal */}
       {isModalOpen && <NewClient closeModal={closeModal} />}

@@ -8,10 +8,25 @@ import { IoSearchSharp } from "react-icons/io5";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { IoArrowBackOutline } from "react-icons/io5";
 import RecordsCard from '../../components/card/recordsCard.tsx';
+import NewRecord from './newRecord.tsx';
+import UpdateRecord from './updateRecord.tsx';
+import DeleteRecord from './deleteRecord.tsx';
 
 
 
 const RecordsList = () => {
+    
+const [isModalOpen, setIsModalOpen] = useState(false);
+const Navigate = useNavigate();
+
+const openModal = () => {
+  setIsModalOpen(true);
+};
+
+const closeModal = () => {
+  setIsModalOpen(false);
+};
+
     return (
         <div className ="h-full font-jost bg-[#D8DEDE] animate-fade-in">
 
@@ -60,7 +75,7 @@ const RecordsList = () => {
                 <div className="flex-grow"></div>
                 <div className="mr-[3%]">
                     <button
-                        // onClick=
+                        onClick={openModal}
                         className='w-[10vw] flex items-center text-[1.3em] p-2 rounded-xl shadow-xl text-[#595959] bg-[#cbc553ca] hover:text-white hover:bg-[#cbc553ca]  transition-colors delay-250 duration-[3000] ease-in '
                     >
                         <IoMdAddCircleOutline className='text-[1.3em] ml-[8%]' /> 
@@ -71,30 +86,9 @@ const RecordsList = () => {
 
         {/* Records List */}
         <RecordsCard/>
-            {/* <div className='h-[74vh] w-[95%] mt-[2%] ml-[2%] font-istok bg-white rounded-xl shadow-xl overflow-y-scroll'>
-                <table className="w-full table-auto">
-                    <thead className='text-[1.4em] text-[#595959]'>
-                        <tr className='h-[8vh] p-4'>
-                            <th>Client Name</th>
-                            <th>Contact Number</th>
-                            <th>No. of Transactions</th>
-                            <th>Status</th>
-                            <th>Manage</th>
-                        </tr>
 
-                        <tr>
-                            <th colSpan={6} className='border-b-[3px] border-[#59595954] xs:max-sm:border-b-[2px]'></th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        <tr className='text-center text-[1.4em]'>
-
-                        </tr>
-                    </tbody>
-
-                </table>
-            </div> */}
+        {/* New Record Modal */}
+        {isModalOpen && <DeleteRecord closeModal={closeModal} />}
         </div>
     )
 

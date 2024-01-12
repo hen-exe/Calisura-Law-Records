@@ -4,7 +4,7 @@ const express = require('express')
 const app = express()
 
 const authenticationRoutes = require('./routes/authenticationRoute')
-
+const userRoutes = require('./routes/userRoute')
 
 app.use(cors({
     origin: [process.env.CORS_ORIGIN],
@@ -33,6 +33,6 @@ app.use(cors({
 
 app.use(express.json());
 app.use('/',authenticationRoutes);
-
+app.use('/user',userRoutes);
 
 module.exports = app;

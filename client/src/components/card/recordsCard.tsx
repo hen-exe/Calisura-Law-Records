@@ -10,7 +10,7 @@ const client_status = 'Active';
 const ClientCard = () => {
     return (
         <div className='h-[74vh] w-[95%] mt-[2%] ml-[2%] font-istok bg-white rounded-xl shadow-xl overflow-y-scroll animate-small-fade-in-down'>
-        <table className="w-full table-auto">
+        <table className="w-full table-fixed">
             <thead className='text-[1.4em] text-[#595959]'>
                 <tr className='h-[8vh] p-4'>
                     <th>Date</th>
@@ -31,10 +31,10 @@ const ClientCard = () => {
             <tbody className='font-istok '>
                 <tr className='text-center text-[1.5em] font-semibold text-[#595959] bg-[#b3b07235]'>
                     <td className='py-[3%]'>12/13/12</td>
-                    <td>Payment to Payment to</td>
+                    <td className=''>Payment to Payment t whene </td>
                     <td>1000</td>
                     <td>12000</td>
-                    <td>+ 1000</td>
+                    <td>+ 1000</td> 
                     <td> bababaa </td>
                     <td>
                         <div className='flex justify-center'>
