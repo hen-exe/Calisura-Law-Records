@@ -1,13 +1,61 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import { IoMdPerson, IoIosCloseCircle } from 'react-icons/io';
 import { IoNewspaperSharp } from "react-icons/io5";
+import { format } from 'date-fns';
+import config from '../../common/config';
+import axios from 'axios';
 
 
 interface NewRecordProps {
-    closeModal: () => void;
-  }
+  closeModal: () => void;
+  client_id: number;
+}
 
-const NewRecord: React.FC<NewRecordProps> = ({ closeModal }) => {
+
+const NewRecord: React.FC<NewRecordProps> = ({ closeModal, client_id }) => {
+  const [date, setDate] = useState('');
+  const [transaction, setTransaction] = useState<string>('');
+  const [payments, setPayments] = useState<number>(0);
+  const [expenses, setExpenses] = useState<number>(0);
+  const [remarks, setRemarks] = useState<string>('');
+
+  const [errMess, setErrMess] = useState<string>('');
+
+
+  const submitHandler = async (event: FormEvent) => {
+    try {
+      if (
+        date === '' && 
+        transaction === ''  && 
+        payments === 0 && 
+        expenses === 0  && 
+        remarks === ''
+        ) {
+        setErrMess('All fields are required!');
+      }else {
+        const formattedDate = format(new Date(date), 'yyyy-MM-dd');
+
+        axios.put(`${config.API}/records/createRecord`, {
+          date: formattedDate,
+          transaction,
+          payments,
+          expenses,
+          remarks,
+          client_id
+        }).then((res) => {
+          if(res.data.success == true) {
+            setErrMess(res.data.message);
+          }else {
+            setErrMess(res.data.error);
+          }
+        })     
+      }
+    }catch (err: any) {
+      console.log(err);
+      setErrMess(err.response?.data?.message || 'An error occurred');
+  }
+}
+
   return (
     <>
         <div className="h-full w-full bg-[rgba(0,0,0,0.5)] backdrop-blur-sm fixed top-0 z-[100]">
@@ -32,7 +80,8 @@ const NewRecord: React.FC<NewRecordProps> = ({ closeModal }) => {
                         type="date"
                         name="date"
                         id="date"
-                        value=""
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
                         className=" ml-[23%] text-[0.9em] w-[20vw] rounded-lg border-box border-2 border-solid border-[#595959be]"
                         />
                     </div>
@@ -43,7 +92,8 @@ const NewRecord: React.FC<NewRecordProps> = ({ closeModal }) => {
                         type="text"
                         name="transaction"
                         id="transaction"
-                        value=""
+                        value={transaction}
+                        onChange={(e) => setTransaction(e.target.value)}
                         className=" ml-[5%] text-[0.9em] rounded-lg border-box border-2 border-solid border-[#595959be]"
                         />
                     </div>
@@ -54,7 +104,8 @@ const NewRecord: React.FC<NewRecordProps> = ({ closeModal }) => {
                         type="text"
                         name="remarks"
                         id="remarks"
-                        value=""
+                        value={remarks}
+                        onChange={(e) => setRemarks(e.target.value)}
                         className=" ml-[13%] h-[10vh] text-[0.9em] p-2 rounded-lg border-box border-2 border-solid border-[#595959be]"
                         />
                     </div>
@@ -65,9 +116,10 @@ const NewRecord: React.FC<NewRecordProps> = ({ closeModal }) => {
                         <p className="text-[#595959]">Payments</p>
                         <input
                         type="text"
-                        name="transaction"
-                        id="transaction"
-                        value=""
+                        name="payments"
+                        id="payments"
+                        value={payments}
+                        onChange={(e) => setPayments(Number(e.target.value))}
                         className=" ml-[5%] text-[0.9em] rounded-lg border-box border-2 border-solid border-[#595959be]"
                         />
                     </div>
@@ -76,9 +128,10 @@ const NewRecord: React.FC<NewRecordProps> = ({ closeModal }) => {
                         <p className="text-[#595959]">Expenses</p>
                         <input
                         type="text"
-                        name="transaction"
-                        id="transaction"
-                        value=""
+                        name="expenses"
+                        id="expenses"
+                        value={expenses}
+                        onChange={(e) => setExpenses(Number(e.target.value))}
                         className=" ml-[5%] text-[0.9em] rounded-lg border-box border-2 border-solid border-[#595959be]"
                         />
                     </div>
@@ -88,7 +141,7 @@ const NewRecord: React.FC<NewRecordProps> = ({ closeModal }) => {
 
               <div className="mt-[5%] ml-[83%]">
                 <button
-                  // onClick=
+                  onClick={submitHandler}
                   className="w-[7vw] flex justify-center text-[1.3em] p-2 rounded-xl shadow-xl text-[#595959] bg-[#cbc553ca] hover:text-white hover:bg-[#cbc553ca]  transition-colors delay-250 duration-[3000] ease-in"
                 >
                   <p className="ml-[5%]"> Save </p>

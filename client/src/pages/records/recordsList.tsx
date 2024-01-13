@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, FormEvent } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import config from '../../common/config.ts';
@@ -8,6 +8,7 @@ import { IoMdAddCircleOutline } from 'react-icons/io';
 import { IoArrowBackOutline } from 'react-icons/io5';
 import RecordsCard from '../../components/card/recordsCard.tsx';
 import DeleteRecord from './deleteRecord.tsx';
+import NewRecord from './newRecord.tsx';
 
 interface RecordsListProps {
   record_id: number;
@@ -42,8 +43,6 @@ const RecordsList: React.FC = () => {
     const [errMess, setErrMess] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    console.log('ahdahshha ->', client_name)
-    
     useEffect(() => {
       if (client_id !== null) {
         axios
@@ -73,7 +72,7 @@ const RecordsList: React.FC = () => {
 
             {/* Header */}
             <div className="w-full h-[10vh] flex bg-white rounded-xl shadow-xl items-center ">
-                <div className="w-[10vw] p-4 text-[1.5em] text-[#595959] font-semibold hover:text-[#767a40]  transition-colors delay-250 duration-[3000] ease-in ">
+                <div className="w-[20vw] p-4 text-[1.5em] text-[#595959] font-semibold hover:text-[#767a40]  transition-colors delay-250 duration-[3000] ease-in ">
                     <Link to="/homePage">
                         <button className="flex w-[100%] p-4">
                             <IoArrowBackOutline className="mt-[4%] text-[1.2em]" />
@@ -82,11 +81,11 @@ const RecordsList: React.FC = () => {
                     </Link>
                  </div>
 
-                <div className="text-[2.8em] text-[#595959] font-bold ml-[35%]"> 
+                <div className="w-full ml-[13%] text-center text-[2.8em] text-[#595959] font-bold"> 
                     Records List
                  </div>
 
-                 <div className="w-[10vw] p-4 ml-[33%] text-[1.5em] text-[#595959] font-semibold hover:text-[#767a40]  transition-colors delay-250 duration-[3000] ease-in ">
+                 <div className="w-[20vw] ml-[10%] p-4 text-[1.5em] text-[#595959] font-semibold hover:text-[#767a40]  transition-colors delay-250 duration-[3000] ease-in ">
                     <Link to="/">
                         <button className="flex w-[100%] p-4">
                             <LuLogOut className="mt-[4%] text-[1.2em]" />
@@ -98,7 +97,7 @@ const RecordsList: React.FC = () => {
 
             {/* Search & Add Record */}
             <div className="w-full flex mt-[3%] animate-small-fade-in-down">
-                <div className="flex group ml-[1.5%]">
+                <div className="flex group ml-[1.5%] mr-[15%]">
                     <input
                         type='text'
                         placeholder="Search for a transaction..."
@@ -107,8 +106,8 @@ const RecordsList: React.FC = () => {
                     <IoSearchSharp className="text-[1.9em] text-[#595959] opacity-70 absolute left-[24%] mt-[0.3%] group-hover:opacity-50 transition delay-250 duration-[3000] ease-in" />
                 </div>
 
-                <div className='text-[2em] text-[#595959] font-semibold ml-[20%] bg-[#ffffffc4] rounded-xl px-6'>
-                    <p>{client_name}</p>
+                <div className='w-[20vw] h-auto text-center text-[1.9em] text-[#595959] font-semibold bg-[#ffffffc4] rounded-xl px-6'>
+                    <p className='break-words text-wrap'>{client_name}</p>
                 </div>
 
                 <div className="flex-grow"></div>
@@ -127,7 +126,8 @@ const RecordsList: React.FC = () => {
         <RecordsCard records = {records}/>
 
         {/* New Record Modal */}
-        {isModalOpen && <DeleteRecord closeModal={closeModal} />}
+        {isModalOpen && <NewRecord closeModal={closeModal} client_id={client_id} />}
+
         </div>
     )
 

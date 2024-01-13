@@ -35,13 +35,13 @@ const ClientCard: React.FC<ClientCardProps> = ({ clients, userType  }) => {
     //More
     const handleMoreClick = (clientId: number) => {
       const selectedClient = clients.find((client) => client.client_id === clientId);
-    
+
       if (selectedClient) {
         const selectedClientName = selectedClient.client_name;
-    
+
         setClientName(selectedClientName);
-    
-        Navigate('/recordsList', { state: { client_id: clientId, client_name: clientName } });
+
+        Navigate('/recordsList', { state: { client_id: clientId, client_name: selectedClientName } });
       }
     };
 
