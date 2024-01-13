@@ -6,6 +6,7 @@ import { FaTrashCan } from "react-icons/fa6";
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import config from '../../common/config';
+import DeleteClient from '../../pages/clients/deleteClient';
 
 
 interface ClientDetailsProps {
@@ -17,12 +18,25 @@ interface ClientDetailsProps {
   }
   
 
-
 interface ClientCardProps {
     clients: ClientDetailsProps[];
 }
       
 const ClientCard: React.FC<ClientCardProps> = ({ clients }) => {
+    const [deleteModal, setDeleteModal] = useState(false);
+    const [deleteClientId, setDeleteClientId] = useState<number | null>(null);
+
+
+
+    //Delete
+    const handleDeleteClick = (clientId: number) => {
+        setDeleteClientId(clientId);
+      };
+    const closeModal = () => {
+        setDeleteModal(false);
+        setDeleteClientId(null);
+      };
+
     return (
         <div className='h-[74vh] w-[95%] mt-[2%] ml-[2%] font-istok bg-white rounded-xl shadow-xl overflow-y-scroll snap-x animate-small-fade-in-down'>
         <table className="w-full table-auto">
@@ -78,7 +92,9 @@ const ClientCard: React.FC<ClientCardProps> = ({ clients }) => {
                 </div>
 
                 <div className="flex justify-center">
-                  <button className="flex items-center text-[1em] px-[9%] py-[2.5%] bg-[#cb6f53b5] rounded-3xl shadow-xl hover:bg-[#cb6f53d3] transition delay-250 duration-[3000] ease-in">
+                  <button 
+                    onClick = {() => handleDeleteClick(client.client_id)}
+                    className="flex items-center text-[1em] px-[9%] py-[2.5%] bg-[#cb6f53b5] rounded-3xl shadow-xl hover:bg-[#cb6f53d3] transition delay-250 duration-[3000] ease-in">
                     <FaTrashCan className="" />
                   </button>
                 </div>
@@ -87,6 +103,14 @@ const ClientCard: React.FC<ClientCardProps> = ({ clients }) => {
           ))}
         </tbody>
       </table>
+
+     {/* Delete Client Modal */}
+     {deleteClientId !== null && (
+        <DeleteClient
+          closeModal={closeModal}
+          client={clients.find((c) => c.client_id === deleteClientId)}
+        />
+      )}
     </div>
   );
 };

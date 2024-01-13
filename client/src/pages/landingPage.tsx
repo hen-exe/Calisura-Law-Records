@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import config from '../common/config.ts'
 import background from '../assets/background.jpg';
+import img1 from '../assets/img_3.jpg';
+import img2 from '../assets/img_2.jpg';
 import Danger from '../components/alerts/error';
 
 const LandingPage = () => {
@@ -75,8 +77,15 @@ const LandingPage = () => {
             className='w-[50%] h-[100%] p-4 items-center' 
             onClick={() => handleDivClick('venus')}
           >
-            <div className={`bg-[#D9D9D9] w-[70%] h-[65%] ml-[15%] rounded-full shadow-inner  ${selectedDiv === 'venus' ? 'border-[3px] border-solid border-[#595959be] transition-all delay-250 duration-[3000] ease-in' : ''}`}></div>
-            <p className={`text-[1.4em] text-[#595959] ml-[33%] mt-[10%] ${selectedDiv === 'venus' ? 'font-bold  transition-all delay-250 duration-[3000] ease-in' : ''}`}>
+            <div className={`bg-[#D9D9D9] w-[70%] h-[65%] ml-[15%] rounded-full shadow-xl  
+                ${selectedDiv === 'venus' ? 'border-[3px] border-solid border-[#595959be] transition-all delay-250 duration-[3000] ease-in' : ''}`}>
+                <img 
+                  src={img1}
+                  className='object-cover w-full h-full rounded-full shadow-inner'
+                />
+            </div>
+            <p className={`text-[1.4em] text-[#595959] ml-[33%] mt-[10%] 
+                ${selectedDiv === 'venus' ? 'font-bold  transition-all delay-250 duration-[3000] ease-in' : ''}`}>
               Venus</p>
           </div>
 
@@ -84,8 +93,15 @@ const LandingPage = () => {
             className='w-[50%] h-[100%] p-4 items-center'
             onClick={() => handleDivClick('atty-janice')}
           >
-            <div className={`bg-[#D9D9D9] w-[70%] h-[65%] ml-[15%] rounded-full shadow-inner  ${selectedDiv === 'atty-janice' ? 'border-[3px] border-solid border-[#595959be] transition-all delay-250 duration-[3000] ease-in' : ''}`}></div>
-            <p className={`text-[1.4em] text-[#595959] ml-[20%] mt-[10%] ${selectedDiv === 'atty-janice' ? 'font-bold  transition-all delay-250 duration-[3000] ease-in' : ''}`}>
+            <div className={`bg-[#D9D9D9] w-[70%] h-[65%] ml-[15%] rounded-full shadow-inner  
+                ${selectedDiv === 'atty-janice' ? 'border-[3px] border-solid border-[#595959be] transition-all delay-250 duration-[3000] ease-in' : ''}`}>
+                <img 
+                  src={img2}
+                  className='object-cover w-full h-full rounded-full shadow-inner'
+                />
+            </div>
+            <p className={`text-[1.4em] text-[#595959] ml-[20%] mt-[10%] 
+                ${selectedDiv === 'atty-janice' ? 'font-bold  transition-all delay-250 duration-[3000] ease-in' : ''}`}>
               Atty. Janice</p>
           </div>
         </div>

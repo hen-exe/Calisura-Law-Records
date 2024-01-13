@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
-const {retrieveAll} = require ('../controllers/userController');
+const {createClient, retrieveAll, retrieveByParams, deleteClient} = require ('../controllers/userController');
 
+router.put('/createClient', createClient);
 router.get('/retrieveAll', retrieveAll);
+router.get('/retrieveByParams', retrieveByParams);
+router.put('/deleteClient', deleteClient);
 
 module.exports = router;
