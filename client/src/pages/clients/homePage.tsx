@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { LuLogOut } from 'react-icons/lu';
 import { IoSearchSharp } from 'react-icons/io5';
 import { IoMdAddCircleOutline } from 'react-icons/io';
@@ -7,6 +7,10 @@ import ClientCard from '../../components/card/clientCard.tsx';
 import NewClient from './newClient.tsx';
 import config from '../../common/config.ts';
 import axios from 'axios';
+
+interface HomePageProps {
+  userType: string;
+}
 
 interface ClientDetailsProps {
   client_id: number;
@@ -16,9 +20,36 @@ interface ClientDetailsProps {
   account_status: string;
 }
 
-const ClientListComponent: React.FC = () => {
+interface ClientListComponentProps {
+  clients: ClientDetailsProps[];
+  userType: string; 
+}
+
+const ClientListComponent: React.FC<ClientListComponentProps> =({ clients, userType }) => {
+
+  const sortedClients = clients.sort((a, b) => a.client_name.localeCompare(b.client_name));
+
+  const organizedClients = [
+    ...sortedClients.filter((client) => client.account_status !== 'Deleted'),
+    ...sortedClients.filter((client) => client.account_status === 'Deleted'),
+  ];
+
+  return (
+    <div>
+      <ClientCard clients={organizedClients}  userType={userType} />
+    </div>
+  );
+};
+
+
+const HomePage: React.FC<HomePageProps> = ({ userType }) => {
+  
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const [clients, setClients] = useState<ClientDetailsProps[]>([]);
   const [errMess, setErrMess] = useState('');
+  const { state } = useLocation();
+  const user_Type = state?.userType;
 
   useEffect(() => {
     axios
@@ -31,19 +62,6 @@ const ClientListComponent: React.FC = () => {
       });
   }, []);
 
-  console.log('Clients:', clients);
-
-  return (
-    <div>
-      <ClientCard clients={clients} />
-      {errMess && <p>Error: {errMess}</p>}
-    </div>
-  );
-};
-
-const HomePage = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -51,6 +69,19 @@ const HomePage = () => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
+
+  const handleSearch = () => {
+    // Fetch clients based on search query
+    axios
+      .get(`${config.API}/user/retrieveByParams?col=client_name&val=${searchQuery}`)
+      .then((res) => {
+        setClients(res.data.users);
+      })
+      .catch((err) => {
+        setErrMess(err.response?.data?.message || 'An error occurred');
+      });
+  };
+
 
   return (
     <div className="h-full font-jost bg-[#D8DEDE] animate-fade-in">
@@ -76,9 +107,13 @@ const HomePage = () => {
           <input
             type="text"
             placeholder="Search for a client..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
             className="w-[25vw] h-[5vh] text-[1.3em] p-[0.2rem] pl-[1rem] rounded-full border-box border-[3px] border-solid border-[#595959be] bg-white  group-hover:border-[#3a3a3a84] transition delay-250 duration-[3000] ease-in active:border-[#ffffffd1]"
           />
-          <IoSearchSharp className="text-[1.9em] text-[#595959] opacity-70 absolute left-[24%] mt-[0.3%] group-hover:opacity-50 transition delay-250 duration-[3000] ease-in" />
+          <IoSearchSharp 
+            onClick={handleSearch}
+            className="text-[1.9em] text-[#595959] opacity-70 absolute left-[24%] mt-[0.3%] group-hover:opacity-50 transition delay-250 duration-[3000] ease-in" />
         </div>
 
         <div className="ml-[60%]">
@@ -93,7 +128,7 @@ const HomePage = () => {
       </div>
 
       {/* Client List */}
-      <ClientListComponent />
+      <ClientListComponent clients={clients} userType={user_Type} />
 
       {/* New Client Modal */}
       {isModalOpen && <NewClient closeModal={closeModal} />}

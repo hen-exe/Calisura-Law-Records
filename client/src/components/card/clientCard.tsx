@@ -3,10 +3,12 @@ import React, { useEffect, useState } from 'react'
 import { MdOutlineMoreHoriz } from "react-icons/md";
 import { HiPencil } from "react-icons/hi";
 import { FaTrashCan } from "react-icons/fa6";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import config from '../../common/config';
 import DeleteClient from '../../pages/clients/deleteClient';
+import UpdateClient from '../../pages/clients/updateClient';
+import RecordsList from '../../pages/records/recordsList';
 
 
 interface ClientDetailsProps {
@@ -20,22 +22,48 @@ interface ClientDetailsProps {
 
 interface ClientCardProps {
     clients: ClientDetailsProps[];
+    userType: string;
 }
       
-const ClientCard: React.FC<ClientCardProps> = ({ clients }) => {
+const ClientCard: React.FC<ClientCardProps> = ({ clients, userType  }) => {
+    const [updateModal, setUpdateModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
-    const [deleteClientId, setDeleteClientId] = useState<number | null>(null);
+    const [clientName, setClientName] = useState<string>('');
+    const [clientId, setClientId] = useState<number | null>(null);
+    const Navigate = useNavigate();
 
+    //More
+    const handleMoreClick = (clientId: number) => {
+      const selectedClient = clients.find((client) => client.client_id === clientId);
+    
+      if (selectedClient) {
+        const selectedClientName = selectedClient.client_name;
+    
+        setClientName(selectedClientName);
+    
+        Navigate('/recordsList', { state: { client_id: clientId, client_name: clientName } });
+      }
+    };
 
-
+    //Update
+    const handleUpdateClick = (clientId: number) => {
+      setUpdateModal(true);
+      setDeleteModal(false);
+      setClientId(clientId);
+    };
+    
     //Delete
     const handleDeleteClick = (clientId: number) => {
-        setDeleteClientId(clientId);
-      };
+      setDeleteModal(true);
+      setUpdateModal(false);
+      setClientId(clientId);
+    };
+
     const closeModal = () => {
         setDeleteModal(false);
-        setDeleteClientId(null);
-      };
+        setUpdateModal(false);
+        setClientId(null);
+    };
 
     return (
         <div className='h-[74vh] w-[95%] mt-[2%] ml-[2%] font-istok bg-white rounded-xl shadow-xl overflow-y-scroll snap-x animate-small-fade-in-down'>
@@ -76,41 +104,59 @@ const ClientCard: React.FC<ClientCardProps> = ({ clients }) => {
                   {client.account_status}
                 </p>
               </td>
+
+              {/* Buttons */}
               <td>
                 <div className="flex justify-center">
-                  <Link to="/recordsList">
-                    <button className="flex items-center text-[1.5em] px-4 mb-[6%] bg-[#D9D9D9] rounded-3xl shadow-xl hover:bg-[#bababa] transition delay-250 duration-[3000] ease-in">
+                    <button 
+                      onClick={() => handleMoreClick(client.client_id)}
+                      className="flex items-center text-[1.5em] px-4 mb-[6%] bg-[#D9D9D9] rounded-3xl shadow-xl hover:bg-[#bababa] transition delay-250 duration-[3000] ease-in">
                       <MdOutlineMoreHoriz className="" />
                     </button>
-                  </Link>
                 </div>
 
-                <div className="flex justify-center">
-                  <button className="flex items-center text-[1.2em] px-[8%] py-[2%] mb-[6%] bg-[#cba1539f] rounded-3xl shadow-xl hover:bg-[#cba153cb] transition delay-250 duration-[3000] ease-in">
-                    <HiPencil className="" />
-                  </button>
-                </div>
+                 {/* Edit Button */}
+                    {userType !== '2' && client.account_status !== 'Deleted' && (
+                      <div className="flex justify-center">
+                        <button 
+                          onClick={() => handleUpdateClick(client.client_id)}
+                          className="flex items-center text-[1.2em] px-[8%] py-[2%] mb-[6%] bg-[#cba1539f] rounded-3xl shadow-xl hover:bg-[#cba153cb] transition delay-250 duration-[3000] ease-in">
+                          <HiPencil className="" />
+                        </button>
+                      </div>
+                    )}
 
-                <div className="flex justify-center">
-                  <button 
-                    onClick = {() => handleDeleteClick(client.client_id)}
-                    className="flex items-center text-[1em] px-[9%] py-[2.5%] bg-[#cb6f53b5] rounded-3xl shadow-xl hover:bg-[#cb6f53d3] transition delay-250 duration-[3000] ease-in">
-                    <FaTrashCan className="" />
-                  </button>
-                </div>
+                    {/* Delete Button */}
+                    {userType !== '2' && client.account_status !== 'Deleted' && (
+                      <div className="flex justify-center">
+                        <button 
+                          onClick={() => handleDeleteClick(client.client_id)}
+                          className="flex items-center text-[1em] px-[9%] py-[2.5%] bg-[#cb6f53b5] rounded-3xl shadow-xl hover:bg-[#cb6f53d3] transition delay-250 duration-[3000] ease-in">
+                          <FaTrashCan className="" />
+                        </button>
+                      </div>
+                    )}
               </td>
             </tr>
           ))}
         </tbody>
       </table>
-
-     {/* Delete Client Modal */}
-     {deleteClientId !== null && (
-        <DeleteClient
+      
+      
+      {clientId !== null && updateModal && (
+        <UpdateClient
           closeModal={closeModal}
-          client={clients.find((c) => c.client_id === deleteClientId)}
+          client={clients.find((c) => c.client_id === clientId)}
         />
       )}
+
+      {clientId !== null && deleteModal && (
+        <DeleteClient
+          closeModal={closeModal}
+          client={clients.find((c) => c.client_id === clientId)}
+        />
+      )}
+
     </div>
   );
 };

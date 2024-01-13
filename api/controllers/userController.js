@@ -44,6 +44,34 @@ const createClient = (req, res) => {
     });
 };
 
+const updateClient = (req, res) => {
+    const { client_id, client_name, contact_number } = req.body;
+
+    const sql = "UPDATE client SET client_name = ?, contact_number = ? WHERE client_id = ?";
+
+    db.query(sql, [client_name, contact_number, client_id], (err, results) => {
+        if (err) {
+            console.error('Error updating client:', err);
+            res.status(500).json({
+                success: false,
+                message: "Failed to update client",
+                error: err.message
+            });
+        } else if (results.affectedRows === 0) {
+            res.status(404).json({
+                success: false,
+                message: "Client not found",
+            });
+        } else {
+            res.status(200).json({
+                success: true,
+                message: "Client updated successfully",
+                data: results
+            });
+        }
+    });
+};
+
 
 const retrieveAll = (req, res) => {
     try {
@@ -106,7 +134,6 @@ const deleteClient = (req, res) => { //soft-delete only
                     error: err.message
                 })
             } else if (results.affectedRows === 0) {
-                // No rows were affected, meaning the client_id was not found
                 res.status(404).json({
                     status: 404,
                     success: false,
@@ -134,6 +161,7 @@ const deleteClient = (req, res) => { //soft-delete only
 
 module.exports = {
     createClient,
+    updateClient,
     retrieveAll,
     retrieveByParams,
     deleteClient

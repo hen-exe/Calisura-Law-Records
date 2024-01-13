@@ -9,8 +9,8 @@ import Danger from '../components/alerts/error';
 
 const LandingPage = () => {
 
-  const [usertype, setUserType] = useState('');
-  const [pass , setPass] = useState('');
+  const [usertype, setUserType] = useState<string>('');
+  const [pass , setPass] = useState<string>('');
   const [errMess, setErrMess] = useState('');
   const Navigate = useNavigate();
 
@@ -42,6 +42,7 @@ const LandingPage = () => {
         });
   
         console.log('Login response:', res);
+        console.log(usertype)
   
         if (res.data.success === false) {
           setErrMess(res.data.error);  
@@ -51,7 +52,7 @@ const LandingPage = () => {
         } 
         else {
           setErrMess('');
-          Navigate('/homePage');
+          Navigate('/homePage', { state: { userType: usertype } });
         }
       } catch (err: any) {
         setErrMess(err.response?.data?.message || 'An error occurred');

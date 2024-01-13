@@ -27,7 +27,7 @@ const DeleteClient: React.FC<DeleteClientProps> = ({ client, closeModal }) => {
     try {
       if (client) {
         const res = await axios.put(`${config.API}/user/deleteClient?client_id=${client.client_id}`);
-        setErrMess('asasdaas');
+        setErrMess('');
         setErrStatus('true');
         closeModal();
       } else {
@@ -43,7 +43,7 @@ const DeleteClient: React.FC<DeleteClientProps> = ({ client, closeModal }) => {
   return (
     <>
         <div className="h-full w-full bg-[rgba(0,0,0,0.5)] backdrop-blur-sm fixed top-0 left-0 z-[100]">
-          <div className="w-[45vw] h-[55vh] absolute left-[30%] top-[20%] bg-white rounded-xl shadow-xl justify-center animate-small-fade-in-down z-[200]">
+          <div className="w-[40vw] h-[55vh] absolute left-[30%] top-[20%] bg-white rounded-xl shadow-xl justify-center animate-small-fade-in-down z-[200]">
             {/* Header */}
             <div className="w-full flex px-6 py-4 mt-[1%] font-jost text-[1.8em] border-b-4">
               <IoMdPerson className="text-[#595959] mr-[2%] mt-[0.6%]" />
@@ -54,8 +54,9 @@ const DeleteClient: React.FC<DeleteClientProps> = ({ client, closeModal }) => {
                 <p>Are you sure you want to delete this client?</p>
             </div>
 
+            {/* Buttons */}
               <div className='flex mt-[12%] font-semibold'>
-                <div className="ml-[60%] mt-[15%]">
+                <div className="ml-[55%] mt-[15%]">
                     <button
                     onClick={closeModal}
                     className="w-[7vw] flex justify-center text-[1.3em] p-2 rounded-xl shadow-xl text-[#595959] bg-[#D9D9D9] hover:text-white hover:bg-[#bababa]  transition-colors delay-250 duration-[3000] ease-in"
