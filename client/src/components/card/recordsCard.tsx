@@ -4,6 +4,8 @@ import { MdOutlineMoreHoriz } from "react-icons/md";
 import { HiPencil } from "react-icons/hi";
 import { FaTrashCan } from "react-icons/fa6";
 import { useNavigate } from 'react-router-dom';
+import UpdateRecord from '../../pages/records/updateRecord';
+import DeleteRecord from '../../pages/records/deleteRecord';
 
 
 interface RecordsListProps {
@@ -25,27 +27,27 @@ interface RecordCardProps {
 const RecordsCard: React.FC<RecordCardProps> = ({ records }) => {
     const [updateModal, setUpdateModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
-    const [clientId, setClientId] = useState<number | null>(null);
+    const [recordId, setRecordId] = useState<number | null>(null);
     const Navigate = useNavigate();
 
     //Update
-    const handleUpdateClick = (clientId: number) => {
+    const handleUpdateClick = (recordId: number) => {
       setUpdateModal(true);
       setDeleteModal(false);
-      setClientId(clientId);
+      setRecordId(recordId);
     };
     
     //Delete
-    const handleDeleteClick = (clientId: number) => {
+    const handleDeleteClick = (recordId: number) => {
       setDeleteModal(true);
       setUpdateModal(false);
-      setClientId(clientId);
+      setRecordId(recordId);
     };
 
     const closeModal = () => {
         setDeleteModal(false);
         setUpdateModal(false);
-        setClientId(null);
+        setRecordId(null);
     };
 
     return (
@@ -96,7 +98,9 @@ const RecordsCard: React.FC<RecordCardProps> = ({ records }) => {
                                     </div>
 
                                     <div className='flex justify-center'>
-                                        <button className='flex items-center text-[1em] px-[9%] py-[2.5%] bg-[#cb6f53b5] rounded-3xl shadow-xl hover:bg-[#cb6f53d3] transition delay-250 duration-[3000] ease-in'>
+                                        <button 
+                                            onClick={() => handleDeleteClick(record.record_id)}
+                                            className='flex items-center text-[1em] px-[9%] py-[2.5%] bg-[#cb6f53b5] rounded-3xl shadow-xl hover:bg-[#cb6f53d3] transition delay-250 duration-[3000] ease-in'>
                                             <FaTrashCan className=''/>
                                         </button>
                                     </div>
@@ -112,6 +116,20 @@ const RecordsCard: React.FC<RecordCardProps> = ({ records }) => {
                     )}
                 </tbody>
             </table>
+
+        {/* {recordId !== null && updateModal && (
+        <UpdateRecord
+          closeModal={closeModal}
+          record={records.find((c) => c.record_id === recordId)}
+        />
+      )} */}
+
+      {recordId !== null && deleteModal && (
+        <DeleteRecord
+          closeModal={closeModal}
+          record={records.find((c) => c.record_id === recordId)}
+        />
+      )}
         </div>
     );
 }

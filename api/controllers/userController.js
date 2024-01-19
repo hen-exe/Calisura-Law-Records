@@ -73,6 +73,29 @@ const updateClient = (req, res) => {
 };
 
 
+const updateClientSpecific = (req, res) => {
+    const { client_id, no_of_transactions} = req.body;
+
+    const sql = `UPDATE client SET no_of_transactions = ? WHERE client_id = ?`;
+
+    db.query(sql, [no_of_transactions, client_id], (err, results) => {
+        if (err) {
+            console.error('Error updating client:', err);
+            res.status(500).json({
+                success: false,
+                message: "Failed to update client",
+                error: err.message
+            });
+        } else {
+            res.status(200).json({
+                success: true,
+                message: "Client updated successfully",
+                data: results
+            });
+        }
+    });
+};
+
 const retrieveAll = (req, res) => {
     try {
         const sql = "SELECT * FROM client"
@@ -95,29 +118,67 @@ const retrieveAll = (req, res) => {
     }
 }
 
-const retrieveByParams = (req,res)=>{
+const retrieveClientDetails = (req, res) => {
     try {
-        const {col, val} = req.query
-        const sql = "SELECT * FROM client WHERE ?? = ?"
-        db.query(sql,[col, val], (err, results) => {
-            if(err){
-                res.status(201).json({error: 'Client does not exist'})
-            }else{
-                res.status(200).json({
-                    status: 200,
+        const { client_id } = req.query;
+
+        const sql = "SELECT r.*, c.no_of_transactions FROM record r JOIN client c ON r.client_id = c.client_id WHERE r.client_id = ?";
+
+        db.query(sql, [client_id], (err, results) => {
+            if (err) {
+                res.status(500).json({ error: "Internal server error" });
+            } else {
+                res.json({
                     success: true,
-                    users: results
-                })
+                    record: results,
+                });
             }
-        })
-    }catch(error){
+        });
+    } catch (error) {
+        console.error(error);
         res.status(500).json({
             status: 500,
             success: false,
             message: "Database Error",
         });
     }
-}
+};
+
+const retrieveByParams = (req, res) => {
+    try {
+      const { col, val } = req.query;
+  
+      let sql;
+      let values;
+  
+      if (col === 'client_name') {
+        sql = "SELECT * FROM client WHERE ?? LIKE ?";
+        values = [col, `%${val}%`];
+      } else {
+        // Invalid column
+        return res.status(400).json({ error: 'Invalid column specified' });
+      }
+  
+      db.query(sql, values, (err, results) => {
+        if (err) {
+          res.status(500).json({ error: 'Internal server error' });
+        } else {
+          res.json({
+            status: 200,
+            success: true,
+            users: results,
+          });
+        }
+      });
+    } catch (error) {
+      res.status(500).json({
+        status: 500,
+        success: false,
+        message: 'Database Error',
+      });
+    }
+  };
+  
 
 const deleteClient = (req, res) => { //soft-delete only
     try {
@@ -162,7 +223,9 @@ const deleteClient = (req, res) => { //soft-delete only
 module.exports = {
     createClient,
     updateClient,
+    updateClientSpecific,
     retrieveAll,
+    retrieveClientDetails,
     retrieveByParams,
     deleteClient
 };

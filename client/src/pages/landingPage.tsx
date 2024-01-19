@@ -41,8 +41,6 @@ const LandingPage = () => {
           password: pass
         });
   
-        console.log('Login response:', res);
-        console.log(usertype)
   
         if (res.data.success === false) {
           setErrMess(res.data.error);  

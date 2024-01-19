@@ -5,9 +5,10 @@ import config from '../../common/config';
 
 interface NewClientProps {
     closeModal: () => void;
+    onNewRecordAdded: () => void;
   }
 
-const NewClient: React.FC<NewClientProps> = ({ closeModal }) => {
+const NewClient: React.FC<NewClientProps> = ({ closeModal, onNewRecordAdded}) => {
   const [clientName, setClientName] = useState<string>('');
   const [contactNum, setcontactNum] = useState<string>('');
   
@@ -24,6 +25,7 @@ const NewClient: React.FC<NewClientProps> = ({ closeModal }) => {
         }).then((res)=> {
           if(res.data.success == true) {
             setErrMess(res.data.message);
+            onNewRecordAdded();
           }else {
             setErrMess(res.data.error);
           }

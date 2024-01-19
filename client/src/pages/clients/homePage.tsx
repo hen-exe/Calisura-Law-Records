@@ -47,6 +47,7 @@ const HomePage: React.FC<HomePageProps> = ({ userType }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [clients, setClients] = useState<ClientDetailsProps[]>([]);
+  const [isNewRecordAdded, setIsNewRecordAdded] = useState(false);
   const [errMess, setErrMess] = useState('');
   const { state } = useLocation();
   const user_Type = state?.userType;
@@ -56,6 +57,7 @@ const HomePage: React.FC<HomePageProps> = ({ userType }) => {
       .get(`${config.API}/user/retrieveAll`)
       .then((res) => {
         setClients(res.data.client);
+        setIsNewRecordAdded(false);
       })
       .catch((err) => {
         setErrMess(err.response?.data?.message || 'An error occurred');
@@ -70,21 +72,101 @@ const HomePage: React.FC<HomePageProps> = ({ userType }) => {
     setIsModalOpen(false);
   };
 
-  const handleSearch = () => {
-    // Fetch clients based on search query
-    axios
-      .get(`${config.API}/user/retrieveByParams?col=client_name&val=${searchQuery}`)
-      .then((res) => {
-        setClients(res.data.users);
-      })
-      .catch((err) => {
-        setErrMess(err.response?.data?.message || 'An error occurred');
-      });
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
   };
 
+  const handleSearch = () => {
+    const trimmedQuery = searchQuery.trim();
+  
+    if (trimmedQuery) {
+      const words = trimmedQuery.split(' ');
+  
+      if (words.length === 1) {
+        // User is searching by full name, first name, or last name
+        axios
+          .get(`${config.API}/user/retrieveByParams?col=client_name&val=${trimmedQuery}`)
+          .then((res) => {
+            setClients(res.data.users);
+          })
+          .catch((err) => {
+            setErrMess(err.response?.data?.message || 'An error occurred');
+          });
+      } else {
+        // User is searching by first name and last name
+        const firstName = words[0];
+        const lastName = words.slice(1).join(' ');
+  
+        axios
+          .get(`${config.API}/user/retrieveByParams?col=client_name&val=${firstName}&last_name=${lastName}`)
+          .then((res) => {
+            setClients(res.data.users);
+          })
+          .catch((err) => {
+            setErrMess(err.response?.data?.message || 'An error occurred');
+          });
+      }
+    } else {
+      axios
+        .get(`${config.API}/user/retrieveAll`)
+        .then((res) => {
+          setClients(res.data.client);
+        })
+        .catch((err) => {
+          setErrMess(err.response?.data?.message || 'An error occurred');
+        });
+    }
+  };
+
+  const handleNewRecordAdded = () => {
+    setIsNewRecordAdded(true);
+  };
+
+  useEffect(() => {
+    console.log(isNewRecordAdded);
+    if (isNewRecordAdded) {
+      clients.forEach((client) => {
+        axios
+          .get(`${config.API}/records/retrieveCount?client_id=${client.client_id}`)
+          .then((res) => {
+            const transactionCount = res.data.data.transactionCount;
+  
+            // Update the client state
+            setClients((prevClients) => {
+              return prevClients.map((prevClient) =>
+                prevClient.client_id === client.client_id
+                  ? { ...prevClient, no_of_transactions: transactionCount }
+                  : prevClient
+              );
+            });
+  
+            // Update the transaction count in the client table
+            axios
+              .put(`${config.API}/user/updateClientSpecific`, {
+                client_id: client.client_id,
+                no_of_transactions: transactionCount,
+              })
+              .then((updateRes) => {
+                console.log("Transaction count updated in the database:", updateRes.data);
+              })
+              .catch((updateErr) => {
+                console.error('Error updating transaction count in the database:', updateErr);
+              });
+          })
+          .catch((err) => {
+            console.error('Error fetching transaction count:', err);
+          });
+      });
+  
+      setIsNewRecordAdded(false);
+    }
+  }, [clients, isNewRecordAdded]);
 
   return (
     <div className="h-full font-jost bg-[#D8DEDE] animate-fade-in">
+      
       {/* Header */}
       <div className="w-full h-[10vh] flex bg-white rounded-xl shadow-xl items-center">
         <div className="text-[2.8em] text-[#595959] font-bold ml-[45%]">
@@ -109,6 +191,7 @@ const HomePage: React.FC<HomePageProps> = ({ userType }) => {
             placeholder="Search for a client..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyPress={handleKeyPress}
             className="w-[25vw] h-[5vh] text-[1.3em] p-[0.2rem] pl-[1rem] rounded-full border-box border-[3px] border-solid border-[#595959be] bg-white  group-hover:border-[#3a3a3a84] transition delay-250 duration-[3000] ease-in active:border-[#ffffffd1]"
           />
           <IoSearchSharp 
@@ -131,7 +214,7 @@ const HomePage: React.FC<HomePageProps> = ({ userType }) => {
       <ClientListComponent clients={clients} userType={user_Type} />
 
       {/* New Client Modal */}
-      {isModalOpen && <NewClient closeModal={closeModal} />}
+      {isModalOpen && <NewClient closeModal={closeModal} onNewRecordAdded={handleNewRecordAdded} />}
     </div>
   );
 };

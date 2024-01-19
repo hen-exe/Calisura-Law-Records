@@ -54,7 +54,27 @@ const retrieveAll = (req, res) => {
     }
 }
 
-const deleteRecord = (req, res) => { //soft-delete only
+const retrieveCount = (req, res) => {
+    const { client_id } = req.query;
+
+    const sql = "SELECT COUNT(*) AS trans_count, client_id FROM record WHERE client_id = ?";
+
+    db.query(sql, [client_id], (err, results) => {
+        if (err) {
+            res.status(500).json({ error: "Internal server error" });
+        } else {
+            const { trans_count, client_id } = results[0];
+
+            res.status(200).json({
+                status: 200,
+                success: true,
+                data: { transactionCount: trans_count, client_id },
+            });
+        }
+    });
+};
+
+const deleteRecord = (req, res) => {
     try {
         const { record_id } = req.query;
 
@@ -99,5 +119,6 @@ const deleteRecord = (req, res) => { //soft-delete only
 module.exports = {
     createRecord,
     retrieveAll,
+    retrieveCount,
     deleteRecord
 }
