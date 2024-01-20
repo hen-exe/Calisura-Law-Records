@@ -118,11 +118,11 @@ const retrieveAll = (req, res) => {
     }
 }
 
-const retrieveClientDetails = (req, res) => {
+const retrieveClientDetails = (req, res) => { //retrieve specific client
     try {
         const { client_id } = req.query;
 
-        const sql = "SELECT r.*, c.no_of_transactions FROM record r JOIN client c ON r.client_id = c.client_id WHERE r.client_id = ?";
+        const sql = "SELECT * FROM client WHERE client_id = ?";
 
         db.query(sql, [client_id], (err, results) => {
             if (err) {
@@ -130,7 +130,7 @@ const retrieveClientDetails = (req, res) => {
             } else {
                 res.json({
                     success: true,
-                    record: results,
+                    client: results,
                 });
             }
         });
@@ -144,7 +144,7 @@ const retrieveClientDetails = (req, res) => {
     }
 };
 
-const retrieveByParams = (req, res) => {
+const retrieveByParams = (req, res) => { //for search
     try {
       const { col, val } = req.query;
   

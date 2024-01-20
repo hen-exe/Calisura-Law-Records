@@ -4,8 +4,6 @@ import { IoMdPerson, IoIosCloseCircle } from 'react-icons/io';
 import { IoNewspaperSharp } from "react-icons/io5";
 import config from '../../common/config';
 
-
-
 interface RecordDetailsProps {
   record_id: number;
   date: string;

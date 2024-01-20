@@ -45,6 +45,8 @@ const RecordsList: React.FC = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
+      console.log("Retrieving records...")
+      
       if (client_id !== null) {
         axios
           .get(`${config.API}/records/retrieveAll`, { params: { client_id } })

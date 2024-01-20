@@ -59,8 +59,7 @@ interface NewClientProps {
       }
     };
   
-    //Update client
-    const handleUpdate = async () => {
+  const handleUpdate = async () => {
       try {
         if (client) {
           const res = await axios.put(`${config.API}/user/updateClient`, {

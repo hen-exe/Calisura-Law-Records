@@ -74,7 +74,34 @@ const retrieveCount = (req, res) => {
     });
   };
 
-  const retrieveByParams = (req, res) => {
+  const retrieveRecordDetails = (req, res) => { //retrieve specific record
+    try {
+        const { record_id } = req.query;
+
+        const sql = "SELECT * FROM record WHERE record_id = ?";
+
+        db.query(sql, [record_id], (err, results) => {
+            if (err) {
+                res.status(500).json({ error: "Internal server error" });
+            } else {
+                res.json({
+                    success: true,
+                    record: results,
+                });
+            }
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            status: 500,
+            success: false,
+            message: "Database Error",
+        });
+    }
+};
+
+  const retrieveByParams = (req, res) => { //for search
+
     try {
       const { col, val } = req.query;
   
@@ -108,6 +135,35 @@ const retrieveCount = (req, res) => {
       });
     }
   };
+
+  const updateRecord = (req, res) => {
+    
+    const { record_id, date, transaction, payments, expenses, remarks } = req.body;
+
+    const sql = "UPDATE record SET date = ?, transaction = ?, payments = ?, expenses = ?, remarks = ?  WHERE record_id = ?";
+    
+    db.query(sql, [date, transaction, payments, expenses, remarks, record_id], (err, results) => {
+        if (err) {
+            console.error('Error updating record:', err);
+            res.status(500).json({
+                success: false,
+                message: "Failed to update record",
+                error: err.message
+            });
+        } else if (results.affectedRows === 0) {
+            res.status(404).json({
+                success: false,
+                message: "Record not found",
+            });
+        } else {
+            res.status(200).json({
+                success: true,
+                message: "Record updated successfully",
+                data: results
+            });
+        }
+    });
+};
 
 
 const deleteRecord = (req, res) => {
@@ -157,5 +213,7 @@ module.exports = {
     retrieveAll,
     retrieveCount,
     retrieveByParams,
+    retrieveRecordDetails,
+    updateRecord,
     deleteRecord
 }

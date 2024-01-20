@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
-const { createRecord, retrieveAll, retrieveCount, retrieveByParams, deleteRecord } = require('../controllers/recordsController');
+const { createRecord, retrieveAll, retrieveCount, retrieveRecordDetails, retrieveByParams, updateRecord, deleteRecord } = require('../controllers/recordsController');
 
 router.put('/createRecord', createRecord);
 router.get('/retrieveAll', retrieveAll);
 router.get('/retrieveCount', retrieveCount);
+router.get('/retrieveRecordDetails', retrieveRecordDetails);
 router.get('/retrieveByParams', retrieveByParams);
+router.put('/updateRecord', updateRecord);
 router.post('/deleteRecord', deleteRecord);
 
 

@@ -92,7 +92,9 @@ const RecordsCard: React.FC<RecordCardProps> = ({ records }) => {
                                     >{record.remarks} </td>
                                 <td>
                                     <div className='flex justify-center'>
-                                        <button className='flex items-center text-[1.2em] px-[8%] py-[2%] mb-[6%] bg-[#cba1539f] rounded-3xl shadow-xl hover:bg-[#cba153cb] transition delay-250 duration-[3000] ease-in'>
+                                        <button 
+                                            onClick={() => handleUpdateClick(record.record_id)}
+                                            className='flex items-center text-[1.2em] px-[8%] py-[2%] mb-[6%] bg-[#cba1539f] rounded-3xl shadow-xl hover:bg-[#cba153cb] transition delay-250 duration-[3000] ease-in'>
                                             <HiPencil className=''/>
                                         </button>
                                     </div>
@@ -117,12 +119,12 @@ const RecordsCard: React.FC<RecordCardProps> = ({ records }) => {
                 </tbody>
             </table>
 
-        {/* {recordId !== null && updateModal && (
+        {recordId !== null && updateModal && (
         <UpdateRecord
           closeModal={closeModal}
           record={records.find((c) => c.record_id === recordId)}
         />
-      )} */}
+      )}
 
       {recordId !== null && deleteModal && (
         <DeleteRecord
