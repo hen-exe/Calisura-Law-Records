@@ -4,13 +4,13 @@ const db = require('./db.js');
 const createRecord = (req, res) => {
     console.log('Request body:', req.body);
 
-    const { date, transaction, payments, expenses, remarks, client_id} = req.body;
+    const { date, transaction, payments, expenses, remarks, client_id } = req.body;
 
-    const total = 0;
+    const total_amount = payments - expenses;
     const status = 'Active';
 
     const sql = "INSERT INTO record (date, transaction, payments, expenses, total_amount, record_status, remarks, client_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    const values = [date, transaction, payments, expenses, total, status, remarks, client_id];
+    const values = [date, transaction, payments, expenses, total_amount, status, remarks, client_id];
 
     db.query(sql, values, (err, results) => {
         if (err) {
@@ -140,11 +140,12 @@ const retrieveCount = (req, res) => {
     
     const { record_id, date, transaction, payments, expenses, remarks } = req.body;
 
-    const sql = "UPDATE record SET date = ?, transaction = ?, payments = ?, expenses = ?, remarks = ?  WHERE record_id = ?";
+    const total = payments - expenses;
+    const sql = "UPDATE record SET date = ?, transaction = ?, payments = ?, expenses = ?, total_amount = ?, remarks = ?  WHERE record_id = ?";
 
-    db.query(sql, [date, transaction, payments, expenses, remarks, record_id], (err, results) => {
+    db.query(sql, [date, transaction, payments, expenses, total, remarks, record_id], (err, results) => {
         if (err) {
-            console.error('Error updating record:', err);
+            console.error('Error updating record:',  err);
             res.status(500).json({
                 success: false,
                 message: "Failed to update record",
@@ -165,6 +166,28 @@ const retrieveCount = (req, res) => {
     });
 };
 
+const updateRecordSpecific = (req, res) => {
+    const { record_id, total_amount} = req.body;
+
+    const sql = `UPDATE record SET total_amount = ? WHERE record_id = ?`;
+
+    db.query(sql, [total_amount, record_id], (err, results) => {
+        if (err) {
+            console.error('Error updating record:', err);
+            res.status(500).json({
+                success: false,
+                message: "Failed to update record",
+                error: err.message
+            });
+        } else {
+            res.status(200).json({
+                success: true,
+                message: "record updated successfully",
+                data: results
+            });
+        }
+    });
+};
 
 const deleteRecord = (req, res) => {
     try {

@@ -37,7 +37,7 @@ const RecordsListComponent: React.FC<RecordCardProps> = ({ records }) => {
 const RecordsList: React.FC = () => {
 
     const location = useLocation();
-    const { client_id, client_name } = location.state || { client_id: null, client_name: '' };
+    const { client_id, client_name, account_status } = location.state || { client_id: null, client_name: '', account_status: '' };
     const [records, setRecords] = useState<RecordsListProps[]>([]);
     const [isRecordCreatedSuccessfully, setIsRecordCreatedSuccessfully] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -184,13 +184,14 @@ const RecordsList: React.FC = () => {
 
                 <div className="flex-grow"></div>
                 <div className="mr-[3%]">
-                    <button
+                  {account_status === 'Active' && (
+                      <button
                         onClick={openModal}
                         className='w-[10vw] flex items-center text-[1.3em] p-2 rounded-xl shadow-xl text-[#595959] bg-[#cbc553ca] hover:text-white hover:bg-[#cbc553ca]  transition-colors delay-250 duration-[3000] ease-in '
                     >
                         <IoMdAddCircleOutline className='text-[1.3em] ml-[8%]' /> 
                         <p className='ml-[5%] font-semibold'> New Record </p>
-                    </button>
+                    </button>) }
                 </div>
             </div>
 

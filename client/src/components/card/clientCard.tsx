@@ -38,10 +38,11 @@ const ClientCard: React.FC<ClientCardProps> = ({ clients, userType  }) => {
 
       if (selectedClient) {
         const selectedClientName = selectedClient.client_name;
+        const selectedClientStatus = selectedClient.account_status;
 
         setClientName(selectedClientName);
 
-        Navigate('/recordsList', { state: { client_id: clientId, client_name: selectedClientName } });
+        Navigate('/recordsList', { state: { client_id: clientId, client_name: selectedClientName, account_status: selectedClientStatus} });
       }
     };
 

@@ -2,16 +2,12 @@ const express = require('express');
 const db = require('./db.js'); 
 
 const login = (req, res) => {
-    // console.log('Received login request:', req.body);
     try {
         const { user_type, password } = req.body;
 
         // Query to retrieve user based on user_type and password
         const sql = "SELECT * FROM user WHERE user_type = ? AND password = ?";
         const values = [user_type, password];
-
-        console.log('SQL query:', sql);
-        console.log('Query values:', values);
 
         db.query(sql, values, (err, dbresult) => {
             if (err) {

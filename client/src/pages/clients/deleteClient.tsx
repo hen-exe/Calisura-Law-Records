@@ -55,7 +55,7 @@ const DeleteClient: React.FC<DeleteClientProps> = ({ client, closeModal }) => {
             </div>
 
             {/* Buttons */}
-              <div className='flex mt-[12%] font-semibold'>
+              <div className='flex mt-[15%] font-semibold'>
                 <div className="ml-[55%] mt-[15%]">
                     <button
                     onClick={closeModal}
