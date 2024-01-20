@@ -124,6 +124,8 @@ const retrieveClientDetails = (req, res) => { //retrieve specific client
 
         const sql = "SELECT * FROM client WHERE client_id = ?";
 
+        console.log(">>>", sql, req)
+        
         db.query(sql, [client_id], (err, results) => {
             if (err) {
                 res.status(500).json({ error: "Internal server error" });

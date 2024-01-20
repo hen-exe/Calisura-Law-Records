@@ -35,13 +35,14 @@ interface NewClientProps {
     //Retrieve client details
     const retrieveClient = async (clientId: any) => {
       try {
-        const res = await axios.get(`${config.API}/user/retrieveByParams`, {
+        const res = await axios.get(`${config.API}/user/retrieveClientDetails`, {
           params: {
-            col: 'client_id',
-            val: clientId
+            client_id: clientId
           }
         });
-        const data = res.data.users;  
+        const data = res.data.client;  
+
+        console.log("USER DATA>>>", clientId, data)
 
         // Check if data exists and has a length greater than 0
         if (data && data.length > 0) {
