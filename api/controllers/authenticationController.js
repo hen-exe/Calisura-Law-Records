@@ -2,7 +2,7 @@ const express = require('express');
 const db = require('./db.js'); 
 
 const login = (req, res) => {
-    console.log('Received login request:', req.body);
+    // console.log('Received login request:', req.body);
     try {
         const { user_type, password } = req.body;
 

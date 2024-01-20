@@ -40,9 +40,9 @@ const LandingPage = () => {
           user_type: usertype,
           password: pass
         });
-  
-  
+ 
         if (res.data.success === false) {
+          console.log("Login successful!")
           setErrMess(res.data.error);  
           setTimeout(() => {
             setErrMess('');

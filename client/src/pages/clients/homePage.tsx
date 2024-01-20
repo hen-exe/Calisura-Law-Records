@@ -47,17 +47,18 @@ const HomePage: React.FC<HomePageProps> = ({ userType }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [clients, setClients] = useState<ClientDetailsProps[]>([]);
-  const [isNewRecordAdded, setIsNewRecordAdded] = useState(false);
+  const [recordCounts, setRecordCounts] = useState({});
   const [errMess, setErrMess] = useState('');
   const { state } = useLocation();
   const user_Type = state?.userType;
 
   useEffect(() => {
+    console.log("Retrieving all clients...")
+
     axios
       .get(`${config.API}/user/retrieveAll`)
       .then((res) => {
         setClients(res.data.client);
-        setIsNewRecordAdded(false);
       })
       .catch((err) => {
         setErrMess(err.response?.data?.message || 'An error occurred');
@@ -72,7 +73,7 @@ const HomePage: React.FC<HomePageProps> = ({ userType }) => {
     setIsModalOpen(false);
   };
 
-  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleSearch();
     }
@@ -120,50 +121,6 @@ const HomePage: React.FC<HomePageProps> = ({ userType }) => {
     }
   };
 
-  const handleNewRecordAdded = () => {
-    setIsNewRecordAdded(true);
-  };
-
-  useEffect(() => {
-    console.log(isNewRecordAdded);
-    if (isNewRecordAdded) {
-      clients.forEach((client) => {
-        axios
-          .get(`${config.API}/records/retrieveCount?client_id=${client.client_id}`)
-          .then((res) => {
-            const transactionCount = res.data.data.transactionCount;
-  
-            // Update the client state
-            setClients((prevClients) => {
-              return prevClients.map((prevClient) =>
-                prevClient.client_id === client.client_id
-                  ? { ...prevClient, no_of_transactions: transactionCount }
-                  : prevClient
-              );
-            });
-  
-            // Update the transaction count in the client table
-            axios
-              .put(`${config.API}/user/updateClientSpecific`, {
-                client_id: client.client_id,
-                no_of_transactions: transactionCount,
-              })
-              .then((updateRes) => {
-                console.log("Transaction count updated in the database:", updateRes.data);
-              })
-              .catch((updateErr) => {
-                console.error('Error updating transaction count in the database:', updateErr);
-              });
-          })
-          .catch((err) => {
-            console.error('Error fetching transaction count:', err);
-          });
-      });
-  
-      setIsNewRecordAdded(false);
-    }
-  }, [clients, isNewRecordAdded]);
-
   return (
     <div className="h-full font-jost bg-[#D8DEDE] animate-fade-in">
       
@@ -191,7 +148,7 @@ const HomePage: React.FC<HomePageProps> = ({ userType }) => {
             placeholder="Search for a client..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyDown}
             className="w-[25vw] h-[5vh] text-[1.3em] p-[0.2rem] pl-[1rem] rounded-full border-box border-[3px] border-solid border-[#595959be] bg-white  group-hover:border-[#3a3a3a84] transition delay-250 duration-[3000] ease-in active:border-[#ffffffd1]"
           />
           <IoSearchSharp 
@@ -214,7 +171,7 @@ const HomePage: React.FC<HomePageProps> = ({ userType }) => {
       <ClientListComponent clients={clients} userType={user_Type} />
 
       {/* New Client Modal */}
-      {isModalOpen && <NewClient closeModal={closeModal} onNewRecordAdded={handleNewRecordAdded} />}
+      {isModalOpen && <NewClient closeModal={closeModal}/>}
     </div>
   );
 };

@@ -32,7 +32,7 @@ const retrieveAll = (req, res) => {
     try {
         const {client_id} = req.query;
 
-        const sql = "SELECT * FROM record WHERE client_id = ?"
+        const sql = "SELECT * FROM record WHERE client_id = ? ORDER BY date DESC"
 
         db.query (sql, [client_id], (err, results) => {
             if (err) {
@@ -40,7 +40,7 @@ const retrieveAll = (req, res) => {
             }else {
                 res.json({
                     success: true,
-                    record: results,
+                    records: results,
                 })
             }
         })
@@ -54,25 +54,61 @@ const retrieveAll = (req, res) => {
     }
 }
 
+
 const retrieveCount = (req, res) => {
+
     const { client_id } = req.query;
-
-    const sql = "SELECT COUNT(*) AS trans_count, client_id FROM record WHERE client_id = ?";
-
-    db.query(sql, [client_id], (err, results) => {
-        if (err) {
-            res.status(500).json({ error: "Internal server error" });
-        } else {
-            const { trans_count, client_id } = results[0];
-
-            res.status(200).json({
-                status: 200,
-                success: true,
-                data: { transactionCount: trans_count, client_id },
-            });
-        }
+    const sql = "SELECT COUNT(*) AS trans_count FROM record WHERE client_id = ?";
+  
+    db.query(sql, client_id, (err, results) => {
+      if (err) {
+        res.status(500).json({ error: "Internal server error" });
+      } else {
+        const transactionCounts = results[0].trans_count;
+        res.status(200).json({
+          status: 200,
+          success: true,
+          data: { [client_id]: transactionCounts },
+        });
+      }
     });
-};
+  };
+
+  const retrieveByParams = (req, res) => {
+    try {
+      const { col, val } = req.query;
+  
+      let sql;
+      let values;
+  
+      if (col === 'transaction') {
+        sql = "SELECT * FROM record WHERE ?? LIKE ?";
+        values = [col, `%${val}%`];
+      } else {
+        // Invalid column
+        return res.status(400).json({ error: 'Invalid column specified' });
+      }
+  
+      db.query(sql, values, (err, results) => {
+        if (err) {
+          res.status(500).json({ error: 'Internal server error' });
+        } else {
+          res.json({
+            status: 200,
+            success: true,
+            records: results,
+          });
+        }
+      });
+    } catch (error) {
+      res.status(500).json({
+        status: 500,
+        success: false,
+        message: 'Database Error',
+      });
+    }
+  };
+
 
 const deleteRecord = (req, res) => {
     try {
@@ -120,5 +156,6 @@ module.exports = {
     createRecord,
     retrieveAll,
     retrieveCount,
+    retrieveByParams,
     deleteRecord
 }

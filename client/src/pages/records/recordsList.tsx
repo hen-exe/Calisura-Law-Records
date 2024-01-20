@@ -39,6 +39,7 @@ const RecordsList: React.FC = () => {
     const location = useLocation();
     const { client_id, client_name } = location.state || { client_id: null, client_name: '' };
     const [records, setRecords] = useState<RecordsListProps[]>([]);
+    const [isRecordCreatedSuccessfully, setIsRecordCreatedSuccessfully] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [errMess, setErrMess] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -49,8 +50,9 @@ const RecordsList: React.FC = () => {
           .get(`${config.API}/records/retrieveAll`, { params: { client_id } })
           .then((res) => {
             if(res.data.success == true) {
-                setRecords(res.data.record);
+                setRecords(res.data.records);
               }else {
+                console.log("couldnt retrieve records")
               }          
           })
           .catch((err) => {
@@ -65,6 +67,71 @@ const RecordsList: React.FC = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
+  };
+
+  const handleNewRecordAdded = async () => {
+    setIsRecordCreatedSuccessfully(true);
+    try {
+      const response = await axios.get(`${config.API}/records/retrieveCount`, {
+        params: { client_id },
+      });
+      const transactionCounts = response.data.data;
+
+      if (isRecordCreatedSuccessfully) {
+        // Update the database with the new record data
+        const res = await 
+            axios.put(`${config.API}/user/updateClientSpecific`, {
+              client_id: client_id,
+              no_of_transactions: transactionCounts[client_id] || 0,
+            })
+      }
+
+    } catch (error) {
+      console.error('Error updating transaction counts:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (isRecordCreatedSuccessfully) {
+      handleNewRecordAdded();
+      setIsRecordCreatedSuccessfully(false);
+    }
+  }, [isRecordCreatedSuccessfully]);
+
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  const handleSearch = () => {
+    const trimmedQuery = searchQuery.trim();
+  
+    if (trimmedQuery) {
+      const words = trimmedQuery.split(' ');
+  
+      if (words.length === 1) {
+        // User is searching first word of transaction
+        axios
+          .get(`${config.API}/records/retrieveByParams?col=transaction&val=${trimmedQuery}`)
+          .then((res) => {
+            setRecords(res.data.records);
+          })
+          .catch((err) => {
+            setErrMess(err.response?.data?.message || 'An error occurred');
+          });
+      }
+    } else {
+      axios
+        .get(`${config.API}/records/retrieveAll`, { params: { client_id } })
+        .then((res) => {
+          setRecords(res.data.records);
+        })
+        .catch((err) => {
+          setErrMess(err.response?.data?.message || 'An error occurred');
+        });
+    }
   };
 
     return (
@@ -101,6 +168,9 @@ const RecordsList: React.FC = () => {
                     <input
                         type='text'
                         placeholder="Search for a transaction..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        onKeyDown={handleKeyDown}
                         className="w-[25vw] h-[5vh] text-[1.3em] p-[0.2rem] pl-[1rem] rounded-full border-box border-[3px] border-solid border-[#595959be] bg-white  group-hover:border-[#3a3a3a84] transition delay-250 duration-[3000] ease-in active:border-[#ffffffd1]"
                     />
                     <IoSearchSharp className="text-[1.9em] text-[#595959] opacity-70 absolute left-[24%] mt-[0.3%] group-hover:opacity-50 transition delay-250 duration-[3000] ease-in" />
@@ -126,7 +196,7 @@ const RecordsList: React.FC = () => {
         <RecordsCard records = {records}/>
 
         {/* New Record Modal */}
-        {isModalOpen && <NewRecord closeModal={closeModal} client_id={client_id} />}
+        {isModalOpen && <NewRecord closeModal={closeModal} client_id={client_id} onNewRecordAdded={handleNewRecordAdded} />}
 
         </div>
     )

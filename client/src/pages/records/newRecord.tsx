@@ -9,15 +9,18 @@ import axios from 'axios';
 interface NewRecordProps {
   closeModal: () => void;
   client_id: number;
+  onNewRecordAdded: () => void;
 }
 
 
-const NewRecord: React.FC<NewRecordProps> = ({ closeModal, client_id }) => {
+const NewRecord: React.FC<NewRecordProps> = ({ closeModal, client_id, onNewRecordAdded }) => {
   const [date, setDate] = useState('');
   const [transaction, setTransaction] = useState<string>('');
   const [payments, setPayments] = useState<number>(0);
   const [expenses, setExpenses] = useState<number>(0);
   const [remarks, setRemarks] = useState<string>('');
+  const [isRecordCreatedSuccessfully, setIsRecordCreatedSuccessfully] = useState(false);
+
 
   const [errMess, setErrMess] = useState<string>('');
 
@@ -32,6 +35,7 @@ const NewRecord: React.FC<NewRecordProps> = ({ closeModal, client_id }) => {
         remarks === ''
         ) {
         setErrMess('All fields are required!');
+        console.log('adding record cancelled')
       }else {
         const formattedDate = format(new Date(date), 'yyyy-MM-dd');
 
@@ -45,6 +49,8 @@ const NewRecord: React.FC<NewRecordProps> = ({ closeModal, client_id }) => {
         }).then((res) => {
           if(res.data.success == true) {
             setErrMess(res.data.message);
+            setIsRecordCreatedSuccessfully(true);
+            onNewRecordAdded();
           }else {
             setErrMess(res.data.error);
           }
