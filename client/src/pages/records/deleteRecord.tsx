@@ -30,10 +30,15 @@ const DeleteRecord: React.FC<DeleteRecordProps> = ({ record, closeModal }) => {
     try {
       if (record) {
         const res = await axios.post(`${config.API}/records/deleteRecord?record_id=${record.record_id}`);
-        setErrMess('');
-        setErrStatus('true');
-        console.log(res.data.message)
-        closeModal();
+
+        if (res.data.success) {
+          setErrMess('');
+          setErrStatus('true');
+          console.log(res.data.message) 
+
+          updateClientTransactions(record?.client_id);
+          closeModal();
+        }
       } else {
         setErrMess('Unsuccessful delete operation');
         setErrStatus('false');
@@ -43,6 +48,27 @@ const DeleteRecord: React.FC<DeleteRecordProps> = ({ record, closeModal }) => {
     }
   };
   
+  const updateClientTransactions = async (client_id: any) => {
+    console.log("UPDATING TRANSAC>>>", client_id)
+    try {
+      const response = await axios.get(`${config.API}/records/retrieveCount`, {
+        params: { client_id },
+      });
+      const transactionCounts = response.data.data;
+
+      if (client_id) {
+        // Update the database with the new record data
+        const res = await 
+            axios.put(`${config.API}/user/updateClientSpecific`, {
+              client_id: client_id,
+              no_of_transactions: transactionCounts[client_id] || 0,
+            })
+      }
+
+    } catch (error) {
+      console.error('Error updating transaction counts:', error);
+    }
+  };
 
   return (
     <>

@@ -58,7 +58,7 @@ const retrieveAll = (req, res) => {
 const retrieveCount = (req, res) => {
 
     const { client_id } = req.query;
-    const sql = "SELECT COUNT(*) AS trans_count FROM record WHERE client_id = ?";
+    const sql = "SELECT COUNT(*) AS trans_count FROM record WHERE client_id = ? AND record_status = 'Active'";
   
     db.query(sql, client_id, (err, results) => {
       if (err) {
@@ -141,7 +141,7 @@ const retrieveCount = (req, res) => {
     const { record_id, date, transaction, payments, expenses, remarks } = req.body;
 
     const sql = "UPDATE record SET date = ?, transaction = ?, payments = ?, expenses = ?, remarks = ?  WHERE record_id = ?";
-    
+
     db.query(sql, [date, transaction, payments, expenses, remarks, record_id], (err, results) => {
         if (err) {
             console.error('Error updating record:', err);

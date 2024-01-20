@@ -46,7 +46,7 @@ const RecordsList: React.FC = () => {
 
     useEffect(() => {
       console.log("Retrieving records...")
-      
+
       if (client_id !== null) {
         axios
           .get(`${config.API}/records/retrieveAll`, { params: { client_id } })
