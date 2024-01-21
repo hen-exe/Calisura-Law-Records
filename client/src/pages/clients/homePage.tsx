@@ -48,8 +48,6 @@ const HomePage: React.FC = ({  }) => {
   const userType = state?.userType || storedUserType;
   const Navigate = useNavigate();
 
-  console.log("HOME PAGE UER TYPE>>>> ", userType)
-
   useEffect(() => {
     console.log("Retrieving all clients...")
 

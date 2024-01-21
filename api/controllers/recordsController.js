@@ -238,5 +238,6 @@ module.exports = {
     retrieveByParams,
     retrieveRecordDetails,
     updateRecord,
+    updateRecordSpecific,
     deleteRecord
 }
