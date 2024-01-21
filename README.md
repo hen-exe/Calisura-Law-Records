@@ -1,12 +1,14 @@
-# Calisura Law Records System
+# 🖥️ Calisura Law Records System
 
 A web application project to keep track of all clients and records of transactions for Calisura Law Office.  It provides functionality for managing client records, allowing users to view, add, update, and delete records associated with individual clients.
-## Tech Stack
+
+## 🔹 Tech Stack
 
 **Client:** React, Material, TailwindCSS
 
 **Server:** Node, Express
-## Run Locally
+
+## 🖱️ Run Locally
 
 Clone the project
 
