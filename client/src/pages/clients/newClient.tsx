@@ -2,6 +2,8 @@ import axios from 'axios';
 import React, { FormEvent, useState } from 'react';
 import { IoMdPerson, IoIosCloseCircle } from 'react-icons/io';
 import config from '../../common/config';
+import Danger from '../../components/alerts/error';
+import Success from '../../components/alerts/success';
 
 interface NewClientProps {
     closeModal: () => void;
@@ -10,8 +12,8 @@ interface NewClientProps {
 const NewClient: React.FC<NewClientProps> = ({ closeModal}) => {
   const [clientName, setClientName] = useState<string>('');
   const [contactNum, setcontactNum] = useState<string>('');
-  
   const [errMess, setErrMess] = useState<string>('');
+  const [errStatus, setErrStatus] = useState<string>('');
 
   const submitHandler = async (event: FormEvent) => {
     try {
@@ -22,10 +24,16 @@ const NewClient: React.FC<NewClientProps> = ({ closeModal}) => {
           client_name: clientName,
           contact_number: contactNum,
         }).then((res)=> {
-          if(res.data.success == true) {
-            setErrMess(res.data.message);
+          if(res.data.success) {
+            setErrMess('Client added!');
+            setErrStatus('true');
+
+            setTimeout(() => {
+              closeModal();
+            }, 2500);
           }else {
-            setErrMess(res.data.error);
+            setErrMess('Unsuccessful create operation. Please try again.');
+            setErrStatus('false');
           }
         })
       }
@@ -87,7 +95,10 @@ const NewClient: React.FC<NewClientProps> = ({ closeModal}) => {
               </div>
             </form>
           </div>
-        </div>
+          
+        {errStatus === 'true' ? <Success message={errMess} /> : null}
+        {errMess !== '' && errStatus !== 'true' ? <Danger message={errMess} /> : null}
+      </div>
     </>
   );
 };

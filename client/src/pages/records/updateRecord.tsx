@@ -4,6 +4,8 @@ import { IoIosCloseCircle } from 'react-icons/io';
 import { IoNewspaperSharp } from "react-icons/io5";
 import config from '../../common/config';
 import { format } from 'date-fns';
+import Danger from '../../components/alerts/error';
+import Success from '../../components/alerts/success';
 
 interface RecordDetailsProps {
   record_id: number;
@@ -29,8 +31,8 @@ const UpdateRecord: React.FC<UpdateRecordProps> = ({ record, closeModal }) => {
   const [editPayments,  seteditPayments] = useState<number>(0);
   const [editExpenses,  seteditExpenses] = useState<number>(0);
   const [editRemarks, seteditRemarks] = useState<string>('');
-
   const [errMess, setErrMess] = useState<string>('');
+  const [errStatus, setErrStatus] = useState<string>('');
 
   useEffect (() => {  
     if (record) {
@@ -65,9 +67,20 @@ const UpdateRecord: React.FC<UpdateRecordProps> = ({ record, closeModal }) => {
           payments: editPayments,
           expenses: editExpenses,
           remarks: editRemarks
-        })
+        });
+          if (res.data.success) {
+            setErrMess('Record updated!');
+            setErrStatus('true');
+
+            setTimeout(() => {
+              closeModal();
+            }, 2500);
+          } else {
+            setErrMess('Unsuccessful update operation. Please try again.');
+            setErrStatus('false');
+          }
       }else {
-        console.log("Record is empty!")
+        setErrMess('Record is empty! Please try again.');
       }
     } catch (err: any) {
         setErrMess(err.response?.data?.message || 'An error occurred');
@@ -202,7 +215,10 @@ const UpdateRecord: React.FC<UpdateRecordProps> = ({ record, closeModal }) => {
                 
               </form>
             </div>
-          </div>
+          
+        {errStatus === 'true' ? <Success message={errMess} /> : null}
+        {errMess !== '' && errStatus !== 'true' ? <Danger message={errMess} /> : null}
+        </div>
       </>   
     );
   };

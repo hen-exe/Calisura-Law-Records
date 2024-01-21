@@ -2,6 +2,8 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { IoNewspaperSharp } from "react-icons/io5";
 import config from '../../common/config';
+import Danger from '../../components/alerts/error';
+import Success from '../../components/alerts/success';
 
 interface RecordDetailsProps {
   record_id: number;
@@ -31,15 +33,17 @@ const DeleteRecord: React.FC<DeleteRecordProps> = ({ record, closeModal }) => {
         const res = await axios.post(`${config.API}/records/deleteRecord?record_id=${record.record_id}`);
 
         if (res.data.success) {
-          setErrMess('');
+          setErrMess('Record deleted! Please refresh the page.');
           setErrStatus('true');
           console.log(res.data.message) 
 
           updateClientTransactions(record?.client_id);
-          closeModal();
+          setTimeout(() => {
+            closeModal();
+          }, 2500); 
         }
       } else {
-        setErrMess('Unsuccessful delete operation');
+        setErrMess('Unsuccessful delete operation. Please try again.');
         setErrStatus('false');
       }
     } catch (err: any) {
@@ -103,7 +107,10 @@ const DeleteRecord: React.FC<DeleteRecordProps> = ({ record, closeModal }) => {
                 </div>
               </div>
           </div>
-        </div>
+          
+        {errStatus === 'true' ? <Success message={errMess} /> : null}
+        {errMess !== '' && errStatus !== 'true' ? <Danger message={errMess} /> : null}
+      </div>
     </>
   );
 };

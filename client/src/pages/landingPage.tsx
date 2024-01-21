@@ -117,7 +117,7 @@ const LandingPage = () => {
                   className='object-cover w-full h-full rounded-full shadow-inner'
                 />
             </div>
-            <p className={`text-[1.4em] text-[#595959] ml-[20%] mt-[10%] 
+            <p className={`text-[1.4em] text-[#595959] ml-[33%] mt-[10%] 
                 ${selectedDiv === 'atty-janice' ? 'font-bold  transition-all delay-250 duration-[3000] ease-in' : ''}`}>
               Janice</p>
           </div>

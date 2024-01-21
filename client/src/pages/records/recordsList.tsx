@@ -190,7 +190,7 @@ const handleLogout = () => {
             </div>
 
         {/* Records List */}
-        <RecordsCard records = {records}/>
+        <RecordsCard records = {records} accountStatus = {account_status}/>
 
         {/* New Record Modal */}
         {isModalOpen && <NewRecord closeModal={closeModal} client_id={client_id} onNewRecordAdded={handleNewRecordAdded} />}

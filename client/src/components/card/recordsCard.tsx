@@ -19,9 +19,10 @@ interface RecordsListProps {
 
 interface RecordCardProps {
     records: RecordsListProps[];
+    accountStatus: string;
 }
 
-const RecordsCard: React.FC<RecordCardProps> = ({ records }) => {
+const RecordsCard: React.FC<RecordCardProps> = ({ records, accountStatus }) => {
     const [updateModal, setUpdateModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [recordId, setRecordId] = useState<number | null>(null);
@@ -92,7 +93,7 @@ const RecordsCard: React.FC<RecordCardProps> = ({ records }) => {
                                     >{record.remarks} </td>
                                  <td>
                                     <div className='flex justify-center'>
-                                        {userType !== '2' && (
+                                        {userType !== '2' && accountStatus !== 'Deleted' && (
                                         <button
                                             onClick={() => handleUpdateClick(record.record_id)}
                                             className='flex items-center text-[1.2em] px-[8%] py-[2%] mb-[6%] bg-[#cba1539f] rounded-3xl shadow-xl hover:bg-[#cba153cb] transition delay-250 duration-[3000] ease-in'>
@@ -102,7 +103,7 @@ const RecordsCard: React.FC<RecordCardProps> = ({ records }) => {
                                     </div>
 
                                     <div className='flex justify-center'>
-                                        {userType !== '2' && (
+                                        {userType !== '2' &&  accountStatus !== 'Deleted' &&  (
                                         <button
                                             onClick={() => handleDeleteClick(record.record_id)}
                                             className='flex items-center text-[1em] px-[9%] py-[2.5%] bg-[#cb6f53b5] rounded-3xl shadow-xl hover:bg-[#cb6f53d3] transition delay-250 duration-[3000] ease-in'>

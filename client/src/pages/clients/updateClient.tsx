@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { IoMdPerson, IoIosCloseCircle } from 'react-icons/io';
 import config from '../../common/config';
 import axios from 'axios';
+import Success from '../../components/alerts/success';
+import Danger from '../../components/alerts/error';
 
 interface ClientDetailsProps {
   client_id: number;
@@ -65,12 +67,18 @@ const UpdateClient: React.FC<NewClientProps> = ({ client, closeModal }) => {
             contact_number: editNum,
           });
           if (res.data.success) {
-            closeModal();
+            setErrMess('Client updated!');
+            setErrStatus('true');
+
+            setTimeout(() => {
+              closeModal();
+            }, 2500);
           } else {
-            setErrStatus(res.data.error);
+            setErrMess('Unsuccessful update operation. Please try again.');
+            setErrStatus('false');
           }
         } else {
-          setErrMess('Unsuccessful update operation');
+          setErrMess('Client is empty! Please try again.');
           setErrStatus('false');
         }
       } catch (err: any) {
@@ -153,7 +161,10 @@ const handleNumChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             </form>
             )}
           </div>
-        </div>
+          
+        {errStatus === 'true' ? <Success message={errMess} /> : null}
+        {errMess !== '' && errStatus !== 'true' ? <Danger message={errMess} /> : null}
+      </div>
     </>
   );
 };

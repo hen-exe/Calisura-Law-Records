@@ -4,6 +4,8 @@ import { IoNewspaperSharp } from "react-icons/io5";
 import { format } from 'date-fns';
 import config from '../../common/config';
 import axios from 'axios';
+import Danger from '../../components/alerts/error';
+import Success from '../../components/alerts/success';
 
 
 interface NewRecordProps {
@@ -20,9 +22,8 @@ const NewRecord: React.FC<NewRecordProps> = ({ closeModal, client_id, onNewRecor
   const [expenses, setExpenses] = useState<number>(0);
   const [remarks, setRemarks] = useState<string>('');
   const [isRecordCreatedSuccessfully, setIsRecordCreatedSuccessfully] = useState(false);
-
-
   const [errMess, setErrMess] = useState<string>('');
+  const [errStatus, setErrStatus] = useState<string>('');
 
 
   const submitHandler = async (event: FormEvent) => {
@@ -48,11 +49,17 @@ const NewRecord: React.FC<NewRecordProps> = ({ closeModal, client_id, onNewRecor
           client_id
         }).then((res) => {
           if(res.data.success == true) {
-            setErrMess(res.data.message);
+            setErrMess('Record added!');
+            setErrStatus('true');
             setIsRecordCreatedSuccessfully(true);
             onNewRecordAdded();
+
+            setTimeout(() => {
+              closeModal();
+            }, 2500);
           }else {
-            setErrMess(res.data.error);
+            setErrMess('Unsuccessful create operation. Please try again.');
+            setErrStatus('false');
           }
         })     
       }
@@ -155,7 +162,10 @@ const NewRecord: React.FC<NewRecordProps> = ({ closeModal, client_id, onNewRecor
               </div>
             </form>
           </div>
-        </div>
+          
+        {errStatus === 'true' ? <Success message={errMess} /> : null}
+        {errMess !== '' && errStatus !== 'true' ? <Danger message={errMess} /> : null}
+      </div>
     </>
   );
 };

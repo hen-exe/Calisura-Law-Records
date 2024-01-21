@@ -26,15 +26,17 @@ const DeleteClient: React.FC<DeleteClientProps> = ({ client, closeModal }) => {
     try {
       if (client) {
         const res = await axios.put(`${config.API}/user/deleteClient?client_id=${client.client_id}`);
-        setErrMess('');
-        setErrStatus('true');
         if (res.data.success) {
-          closeModal();
+          setErrMess('Client deleted! Please refresh the page.');
+          setErrStatus('true');
+          setTimeout(() => {
+            closeModal();
+          }, 2500); 
         } else {
           setErrStatus(res.data.error);
         }
       } else {
-        setErrMess('Unsuccessful delete operation');
+        setErrMess('Unsuccessful delete operation. Please try again.');
         setErrStatus('false');
       }
     } catch (err: any) {
@@ -78,9 +80,9 @@ const DeleteClient: React.FC<DeleteClientProps> = ({ client, closeModal }) => {
               </div>
           </div>
 
-        {errMess !== '' && errStatus === 'true' ? <Success message={errMess} /> : null}
+        {errStatus === 'true' ? <Success message={errMess} /> : null}
         {errMess !== '' && errStatus !== 'true' ? <Danger message={errMess} /> : null}
-        </div>
+      </div>
     </>
   );
 };
