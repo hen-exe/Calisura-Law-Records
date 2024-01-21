@@ -4,7 +4,7 @@ A web application project to keep track of all clients and records of transactio
 
 ## 🔹 Tech Stack
 
-**Client:** React, Material, TailwindCSS
+**Client:** React, TailwindCSS
 
 **Server:** Node, Express
 
