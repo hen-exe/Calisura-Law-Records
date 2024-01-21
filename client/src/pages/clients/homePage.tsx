@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { LuLogOut } from 'react-icons/lu';
 import { IoSearchSharp } from 'react-icons/io5';
 import { IoMdAddCircleOutline } from 'react-icons/io';
@@ -7,10 +7,6 @@ import ClientCard from '../../components/card/clientCard.tsx';
 import NewClient from './newClient.tsx';
 import config from '../../common/config.ts';
 import axios from 'axios';
-
-interface HomePageProps {
-  userType: string;
-}
 
 interface ClientDetailsProps {
   client_id: number;
@@ -21,11 +17,10 @@ interface ClientDetailsProps {
 }
 
 interface ClientListComponentProps {
-  clients: ClientDetailsProps[];
-  userType: string; 
+  clients: ClientDetailsProps[]; 
 }
 
-const ClientListComponent: React.FC<ClientListComponentProps> =({ clients, userType }) => {
+const ClientListComponent: React.FC<ClientListComponentProps> =({ clients }) => {
 
   const sortedClients = clients.sort((a, b) => a.client_name.localeCompare(b.client_name));
 
@@ -36,21 +31,24 @@ const ClientListComponent: React.FC<ClientListComponentProps> =({ clients, userT
 
   return (
     <div>
-      <ClientCard clients={organizedClients}  userType={userType} />
+      <ClientCard clients={organizedClients} />
     </div>
   );
 };
 
 
-const HomePage: React.FC<HomePageProps> = ({ userType }) => {
+const HomePage: React.FC = ({  }) => {
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [clients, setClients] = useState<ClientDetailsProps[]>([]);
-  const [recordCounts, setRecordCounts] = useState({});
   const [errMess, setErrMess] = useState('');
   const { state } = useLocation();
-  const user_Type = state?.userType;
+  const storedUserType = localStorage.getItem('userType');
+  const userType = state?.userType || storedUserType;
+  const Navigate = useNavigate();
+
+  console.log("HOME PAGE UER TYPE>>>> ", userType)
 
   useEffect(() => {
     console.log("Retrieving all clients...")
@@ -121,7 +119,14 @@ const HomePage: React.FC<HomePageProps> = ({ userType }) => {
     }
   };
 
+const handleLogout = () => {
+  localStorage.removeItem('userType');
+  Navigate('/');
+}
+
+
   return (
+    
     <div className="h-full font-jost bg-[#D8DEDE] animate-fade-in">
       
       {/* Header */}
@@ -131,12 +136,12 @@ const HomePage: React.FC<HomePageProps> = ({ userType }) => {
         </div>
 
         <div className="w-[10vw] p-4 ml-[35%] text-[1.5em] text-[#595959] font-semibold hover:text-[#767a40] transition-colors delay-250 duration-[3000] ease-in ">
-          <Link to="/">
-            <button className="flex w-[100%] p-4">
+            <button 
+              className="flex w-[100%] p-4"
+              onClick={handleLogout}>
               <LuLogOut className="mt-[4%] text-[1.2em]" />
               <p className="ml-[10%]">Log Out</p>
             </button>
-          </Link>
         </div>
       </div>
 
@@ -168,7 +173,7 @@ const HomePage: React.FC<HomePageProps> = ({ userType }) => {
       </div>
 
       {/* Client List */}
-      <ClientListComponent clients={clients} userType={user_Type} />
+      <ClientListComponent clients={clients} />
 
       {/* New Client Modal */}
       {isModalOpen && <NewClient closeModal={closeModal}/>}

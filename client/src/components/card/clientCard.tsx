@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from 'react'
-
 import { MdOutlineMoreHoriz } from "react-icons/md";
 import { HiPencil } from "react-icons/hi";
 import { FaTrashCan } from "react-icons/fa6";
-import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import config from '../../common/config';
+import { useNavigate } from 'react-router-dom';
 import DeleteClient from '../../pages/clients/deleteClient';
 import UpdateClient from '../../pages/clients/updateClient';
-import RecordsList from '../../pages/records/recordsList';
 
 
 interface ClientDetailsProps {
@@ -19,18 +15,17 @@ interface ClientDetailsProps {
     account_status: string;
   }
   
-
 interface ClientCardProps {
     clients: ClientDetailsProps[];
-    userType: string;
 }
       
-const ClientCard: React.FC<ClientCardProps> = ({ clients, userType  }) => {
+const ClientCard: React.FC<ClientCardProps> = ({ clients  }) => {
     const [updateModal, setUpdateModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [clientName, setClientName] = useState<string>('');
     const [clientId, setClientId] = useState<number | null>(null);
     const Navigate = useNavigate();
+    const userType = localStorage.getItem('userType');
 
     //More
     const handleMoreClick = (clientId: number) => {
@@ -60,6 +55,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ clients, userType  }) => {
       setClientId(clientId);
     };
 
+    //Close Modal
     const closeModal = () => {
         setDeleteModal(false);
         setUpdateModal(false);
@@ -108,13 +104,15 @@ const ClientCard: React.FC<ClientCardProps> = ({ clients, userType  }) => {
 
               {/* Buttons */}
               <td>
-                <div className="flex justify-center">
-                    <button 
-                      onClick={() => handleMoreClick(client.client_id)}
-                      className="flex items-center text-[1.5em] px-4 mb-[6%] bg-[#D9D9D9] rounded-3xl shadow-xl hover:bg-[#bababa] transition delay-250 duration-[3000] ease-in">
-                      <MdOutlineMoreHoriz className="" />
-                    </button>
-                </div>
+
+                {/* More Button */}
+                  <div className="flex justify-center">
+                      <button 
+                        onClick={() => handleMoreClick(client.client_id)}
+                        className="flex items-center text-[1.5em] px-4 mb-[6%] bg-[#D9D9D9] rounded-3xl shadow-xl hover:bg-[#bababa] transition delay-250 duration-[3000] ease-in">
+                        <MdOutlineMoreHoriz className="" />
+                      </button>
+                  </div>
 
                  {/* Edit Button */}
                     {userType !== '2' && client.account_status !== 'Deleted' && (

@@ -1,79 +1,78 @@
-  import axios from 'axios';
-  import React, { useEffect, useState } from 'react';
-  import { IoMdPerson, IoIosCloseCircle } from 'react-icons/io';
-  import { IoNewspaperSharp } from "react-icons/io5";
-  import config from '../../common/config';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { IoIosCloseCircle } from 'react-icons/io';
+import { IoNewspaperSharp } from "react-icons/io5";
+import config from '../../common/config';
 import { format } from 'date-fns';
 
-  interface RecordDetailsProps {
-    record_id: number;
-    date: string;
-    transaction: string;
-    payments: number;
-    expenses: number;
-    total_amount: number;
-    remarks: string;
-    record_status: string;
-    client_id: number;
-  }
+interface RecordDetailsProps {
+  record_id: number;
+  date: string;
+  transaction: string;
+  payments: number;
+  expenses: number;
+  total_amount: number;
+  remarks: string;
+  record_status: string;
+  client_id: number;
+}
 
 
-  interface UpdateRecordProps {
-      closeModal: () => void;
-      record?: RecordDetailsProps;
-    }
+interface UpdateRecordProps {
+  closeModal: () => void;
+  record?: RecordDetailsProps;
+}
 
-  const UpdateRecord: React.FC<UpdateRecordProps> = ({ record, closeModal }) => {
-    const [editDate, seteditDate] = useState('');
-    const [editTransac, seteditTransac] = useState<string>('');
-    const [editPayments,  seteditPayments] = useState<number>(0);
-    const [editExpenses,  seteditExpenses] = useState<number>(0);
-    const [editRemarks, seteditRemarks] = useState<string>('');
+const UpdateRecord: React.FC<UpdateRecordProps> = ({ record, closeModal }) => {
+  const [editDate, seteditDate] = useState('');
+  const [editTransac, seteditTransac] = useState<string>('');
+  const [editPayments,  seteditPayments] = useState<number>(0);
+  const [editExpenses,  seteditExpenses] = useState<number>(0);
+  const [editRemarks, seteditRemarks] = useState<string>('');
 
-    const [errMess, setErrMess] = useState<string>('');
+  const [errMess, setErrMess] = useState<string>('');
 
-    useEffect (() => {  
-      console.log("RECORDD >>>>", record)
+  useEffect (() => {  
+    if (record) {
+      retrieveRecord(record);
+      }
+  }, [record]);
+
+  //retrieve record details
+  const retrieveRecord = async (record: any) => {
       if (record) {
-        retrieveRecord(record);
+        const formattedDate = format(new Date(record?.date), 'yyyy-MM-dd');
+
+        seteditDate(formattedDate);
+        seteditTransac(record?.transaction);
+        seteditPayments(record?.payments);
+        seteditExpenses(record?.expenses);
+        seteditRemarks(record?.remarks);
+  } else {
+        console.error('No data found for the given record ID');
+  }  
+}
+
+  const handleUpdate = async () => {
+    try {
+      if (record) {
+        const formattedDate = format(new Date(editDate), 'yyyy-MM-dd');
+
+        const res = await axios.put(`${config.API}/records/updateRecord`, {
+          record_id: record.record_id,
+          date: formattedDate,
+          transaction: editTransac,
+          payments: editPayments,
+          expenses: editExpenses,
+          remarks: editRemarks
+        })
+      }else {
+        console.log("Record is empty!")
       }
-    }, [record]);
-
-    //retrieve record details
-    const retrieveRecord = async (record: any) => {
-          if (record) {
-            const formattedDate = format(new Date(record?.date), 'yyyy-MM-dd');
-
-            seteditDate(formattedDate);
-            seteditTransac(record?.transaction);
-            seteditPayments(record?.payments);
-            seteditExpenses(record?.expenses);
-            seteditRemarks(record?.remarks);
-          } else {
-            console.error('No data found for the given record ID');
-        }  
-      }
-
-    const handleUpdate = async () => {
-      try {
-        if (record) {
-          const formattedDate = format(new Date(editDate), 'yyyy-MM-dd');
-
-          const res = await axios.put(`${config.API}/records/updateRecord`, {
-            record_id: record.record_id,
-            date: formattedDate,
-            transaction: editTransac,
-            payments: editPayments,
-            expenses: editExpenses,
-            remarks: editRemarks
-          })
-        }else {
-          console.log("Record is empty!")
-        }
-      } catch (err: any) {
-          setErrMess(err.response?.data?.message || 'An error occurred');
-        }
-      };
+    } catch (err: any) {
+        setErrMess(err.response?.data?.message || 'An error occurred');
+    }
+};
 
 
   const handleTransacChange = (e: React.ChangeEvent<HTMLInputElement>) => {

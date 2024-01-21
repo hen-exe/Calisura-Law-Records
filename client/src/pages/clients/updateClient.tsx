@@ -3,7 +3,6 @@ import { IoMdPerson, IoIosCloseCircle } from 'react-icons/io';
 import config from '../../common/config';
 import axios from 'axios';
 
-
 interface ClientDetailsProps {
   client_id: number;
   client_name: string;
@@ -12,25 +11,24 @@ interface ClientDetailsProps {
   account_status: string;
 }
 
-
 interface NewClientProps {
     closeModal: () => void;
     client?: ClientDetailsProps;
   }
 
-  const UpdateClient: React.FC<NewClientProps> = ({ client, closeModal }) => {
-    const [editName, seteditName] = useState<string>('');
-    const [editNum, seteditNum] = useState<string>('');
-    const [errMess, setErrMess] = useState<string>('');
-    const [errStatus, setErrStatus] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(true);
+const UpdateClient: React.FC<NewClientProps> = ({ client, closeModal }) => {
+  const [editName, seteditName] = useState<string>('');
+  const [editNum, seteditNum] = useState<string>('');
+  const [errMess, setErrMess] = useState<string>('');
+  const [errStatus, setErrStatus] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(true);
     
   
-    useEffect(() => {
-      if (client) {
-        retrieveClient(client?.client_id);
-      }
-    }, [client]);
+  useEffect(() => {
+    if (client) {
+      retrieveClient(client?.client_id);
+    }
+  }, [client]);
   
     //Retrieve client details
     const retrieveClient = async (clientId: any) => {
@@ -41,8 +39,6 @@ interface NewClientProps {
           }
         });
         const data = res.data.client;  
-
-        console.log("USER DATA>>>", clientId, data)
 
         // Check if data exists and has a length greater than 0
         if (data && data.length > 0) {
@@ -107,7 +103,7 @@ const handleNumChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
             {/* Form */}
             {loading ? (
-            <p>Loading...</p> // Render a loading indicator
+            <p>Loading...</p>
           ) : (
             <form>
               <div className="w-full flex mt-[2%] py-6 px-12 font-istok text-[1.7em]">

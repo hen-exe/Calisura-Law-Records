@@ -1,6 +1,5 @@
 import axios from 'axios';
 import React, { useState } from 'react';
-import { IoMdPerson, IoIosCloseCircle } from 'react-icons/io';
 import { IoNewspaperSharp } from "react-icons/io5";
 import config from '../../common/config';
 
@@ -48,8 +47,7 @@ const DeleteRecord: React.FC<DeleteRecordProps> = ({ record, closeModal }) => {
     }
   };
   
-  const updateClientTransactions = async (client_id: any) => {
-    console.log("UPDATING TRANSAC>>>", client_id)
+  const updateClientTransactions = async (client_id: any) => {  
     try {
       const response = await axios.get(`${config.API}/records/retrieveCount`, {
         params: { client_id },

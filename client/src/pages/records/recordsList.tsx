@@ -7,7 +7,6 @@ import { IoSearchSharp } from 'react-icons/io5';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import { IoArrowBackOutline } from 'react-icons/io5';
 import RecordsCard from '../../components/card/recordsCard.tsx';
-import DeleteRecord from './deleteRecord.tsx';
 import NewRecord from './newRecord.tsx';
 
 interface RecordsListProps {
@@ -22,18 +21,6 @@ interface RecordsListProps {
   client_id: number;
 }
 
-interface RecordCardProps {
-  records: RecordsListProps[];
-}
-
-const RecordsListComponent: React.FC<RecordCardProps> = ({ records }) => {
-  return (
-    <div>
-      <RecordsCard records={records} />
-    </div>
-  );
-};
-
 const RecordsList: React.FC = () => {
 
     const location = useLocation();
@@ -43,6 +30,7 @@ const RecordsList: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [errMess, setErrMess] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const Navigate = useNavigate();
 
     useEffect(() => {
       console.log("Retrieving records...")
@@ -136,6 +124,12 @@ const RecordsList: React.FC = () => {
     }
   };
 
+const handleLogout = () => {
+  localStorage.removeItem('userType');
+  
+  Navigate('/');
+}
+
     return (
         <div className ="h-full font-jost bg-[#D8DEDE] animate-fade-in">
 
@@ -155,12 +149,12 @@ const RecordsList: React.FC = () => {
                  </div>
 
                  <div className="w-[20vw] ml-[10%] p-4 text-[1.5em] text-[#595959] font-semibold hover:text-[#767a40]  transition-colors delay-250 duration-[3000] ease-in ">
-                    <Link to="/">
-                        <button className="flex w-[100%] p-4">
+                        <button 
+                          className="flex w-[100%] p-4"
+                          onClick={handleLogout}>
                             <LuLogOut className="mt-[4%] text-[1.2em]" />
                             <p className='ml-[10%]'>Log Out</p> 
                         </button>
-                    </Link>
                  </div>
             </div>
 

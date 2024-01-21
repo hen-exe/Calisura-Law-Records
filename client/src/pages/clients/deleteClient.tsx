@@ -1,6 +1,6 @@
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
-import { IoMdPerson, IoIosCloseCircle } from 'react-icons/io';
+import React, { useState } from 'react';
+import { IoMdPerson } from 'react-icons/io';
 import config from '../../common/config';
 import Danger from '../../components/alerts/error';
 import Success from '../../components/alerts/success';
@@ -12,7 +12,6 @@ interface ClientDetailsProps {
   no_of_transactions: number;
   account_status: string;
 }
-
 
 interface DeleteClientProps {
     closeModal: () => void;
@@ -29,7 +28,11 @@ const DeleteClient: React.FC<DeleteClientProps> = ({ client, closeModal }) => {
         const res = await axios.put(`${config.API}/user/deleteClient?client_id=${client.client_id}`);
         setErrMess('');
         setErrStatus('true');
-        closeModal();
+        if (res.data.success) {
+          closeModal();
+        } else {
+          setErrStatus(res.data.error);
+        }
       } else {
         setErrMess('Unsuccessful delete operation');
         setErrStatus('false');
@@ -39,7 +42,6 @@ const DeleteClient: React.FC<DeleteClientProps> = ({ client, closeModal }) => {
     }
   };
   
-
   return (
     <>
         <div className="h-full w-full bg-[rgba(0,0,0,0.5)] backdrop-blur-sm fixed top-0 left-0 z-[100]">

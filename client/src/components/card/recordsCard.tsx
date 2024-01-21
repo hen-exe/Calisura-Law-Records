@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
-
-import { MdOutlineMoreHoriz } from "react-icons/md";
 import { HiPencil } from "react-icons/hi";
 import { FaTrashCan } from "react-icons/fa6";
-import { useNavigate } from 'react-router-dom';
 import UpdateRecord from '../../pages/records/updateRecord';
 import DeleteRecord from '../../pages/records/deleteRecord';
 
@@ -28,7 +25,7 @@ const RecordsCard: React.FC<RecordCardProps> = ({ records }) => {
     const [updateModal, setUpdateModal] = useState(false);
     const [deleteModal, setDeleteModal] = useState(false);
     const [recordId, setRecordId] = useState<number | null>(null);
-    const Navigate = useNavigate();
+    const userType = localStorage.getItem('userType');
 
     //Update
     const handleUpdateClick = (recordId: number) => {
@@ -44,6 +41,7 @@ const RecordsCard: React.FC<RecordCardProps> = ({ records }) => {
       setRecordId(recordId);
     };
 
+    //Close Modal
     const closeModal = () => {
         setDeleteModal(false);
         setUpdateModal(false);
@@ -74,8 +72,8 @@ const RecordsCard: React.FC<RecordCardProps> = ({ records }) => {
                     {Array.isArray(records) && records.length > 0 ? (
                         records.map((record) => (
                             <tr
-                                key={record.record_id}
-                                className='text-center text-[1.5em] font-semibold text-[#595959] bg-[#b3b07235] snap-center'>
+                            key={record.record_id}  
+                            className='text-center text-[1.5em] font-semibold text-[#595959] snap-center'>
                                 <td className='py-[3%]'>{new Date(record.date).toLocaleDateString('en-US', {
                                         month: 'numeric',
                                         day: 'numeric',
@@ -86,36 +84,42 @@ const RecordsCard: React.FC<RecordCardProps> = ({ records }) => {
                                     >{record.transaction}</td>
                                 <td>{record.payments}</td>
                                 <td>{record.expenses}</td>
-                                <td>{record.total_amount}</td> 
+                                <td className={` ${ record.total_amount >= 0 ? 'text-[#a29d43]' : 'text-[#944738]'}`}>
+                                    {record.total_amount}
+                                </td> 
                                 <td 
                                     className='break-words text-wrap'
                                     >{record.remarks} </td>
-                                <td>
+                                 <td>
                                     <div className='flex justify-center'>
-                                        <button 
+                                        {userType !== '2' && (
+                                        <button
                                             onClick={() => handleUpdateClick(record.record_id)}
                                             className='flex items-center text-[1.2em] px-[8%] py-[2%] mb-[6%] bg-[#cba1539f] rounded-3xl shadow-xl hover:bg-[#cba153cb] transition delay-250 duration-[3000] ease-in'>
-                                            <HiPencil className=''/>
+                                            <HiPencil className='' />
                                         </button>
+                                        )}
                                     </div>
 
                                     <div className='flex justify-center'>
-                                        <button 
+                                        {userType !== '2' && (
+                                        <button
                                             onClick={() => handleDeleteClick(record.record_id)}
                                             className='flex items-center text-[1em] px-[9%] py-[2.5%] bg-[#cb6f53b5] rounded-3xl shadow-xl hover:bg-[#cb6f53d3] transition delay-250 duration-[3000] ease-in'>
-                                            <FaTrashCan className=''/>
+                                            <FaTrashCan className='' />
                                         </button>
+                                        )}
                                     </div>
+                                    </td>
+                                </tr>
+                                ))
+                            ) : (
+                                <tr className='text-center'>
+                                <td colSpan={7} className='font-istok text-[1.5em] py-8'>
+                                    No records available.
                                 </td>
-                            </tr>
-                        ))
-                    ) : (
-                        <tr className='text-center'>
-                            <td colSpan={7}
-                                className='font-istok text-[1.5em] py-8'
-                                >No records available.</td>
-                        </tr>
-                    )}
+                                </tr>
+                            )}
                 </tbody>
             </table>
 
