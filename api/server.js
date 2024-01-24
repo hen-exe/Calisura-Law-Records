@@ -3,9 +3,9 @@ const { checkConnection } = require('./controllers/db');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const cors = require('cors');
-const port = 5000;
+const port = 3000;
 
-const PORT = process.env.PORT || 5000; 
+const PORT = process.env.PORT || 3000; 
 const app = require('./routes')
 
 app.use(express.json());
