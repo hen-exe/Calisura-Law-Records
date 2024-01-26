@@ -4,6 +4,8 @@ const db = require('./db.js');
 
 const login = async (req, res) => {
     try {
+
+        console.log("IM INSIDEEE")
         const { user_type, password } = req.body;
         
         const sql = "SELECT * FROM user WHERE user_type = ?";
