@@ -67,9 +67,9 @@ const ClientCard: React.FC<ClientCardProps> = ({ clients  }) => {
         <table className="w-full table-auto">
             <thead className='text-[1.5em] text-[#595959]'>
                 <tr className='h-[8vh] p-4'>
-                    <th className='w-[25%]'>Client Name</th>
-                    <th>Contact Number</th>
-                    <th>No. of Transactions</th>
+                    <th className='w-[20%]'>Client Name</th>
+                    <th className='w-[20%]'>Contact Number</th>
+                    <th>Transactions</th>
                     <th>Status</th>
                     <th>Manage</th>
                 </tr>
@@ -84,14 +84,14 @@ const ClientCard: React.FC<ClientCardProps> = ({ clients  }) => {
           {clients.map((client) => (
             <tr
               key={client.client_id}
-              className="text-center text-[1.4em] font-semibold text-[#595959] snap-center"
+              className="text-center text-[1.4em] font-semibold  text-[#595959] snap-center"
             >
               <td className="py-[4%]">{client.client_name}</td>
               <td>{client.contact_number}</td>
               <td>{client.no_of_transactions}</td>
               <td className="flex justify-center">
                 <p
-                  className={`font-bold rounded-2xl mt-[35%] py-[2%] w-[70%] text-[0.9em]
+                  className={`font-bold rounded-2xl mt-[25%] py-[1%] w-[50%] text-[0.9em]
                                 ${
                                   client.account_status === 'Active'
                                     ? 'bg-[#cbc55387] text-[#8e8630]'
@@ -119,7 +119,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ clients  }) => {
                       <div className="flex justify-center">
                         <button 
                           onClick={() => handleUpdateClick(client.client_id)}
-                          className="flex items-center text-[1.2em] px-[8%] py-[2%] mb-[6%] bg-[#cba1539f] rounded-3xl shadow-xl hover:bg-[#cba153cb] transition delay-250 duration-[3000] ease-in">
+                          className="flex items-center text-[1.2em] px-[6%] py-[2%] mb-[6%] bg-[#cba1539f] rounded-3xl shadow-xl hover:bg-[#cba153cb] transition delay-250 duration-[3000] ease-in">
                           <HiPencil className="" />
                         </button>
                       </div>
@@ -130,7 +130,7 @@ const ClientCard: React.FC<ClientCardProps> = ({ clients  }) => {
                       <div className="flex justify-center">
                         <button 
                           onClick={() => handleDeleteClick(client.client_id)}
-                          className="flex items-center text-[1em] px-[9%] py-[2.5%] bg-[#cb6f53b5] rounded-3xl shadow-xl hover:bg-[#cb6f53d3] transition delay-250 duration-[3000] ease-in">
+                          className="flex items-center text-[1em] px-[7%] py-[2.5%] bg-[#cb6f53b5] rounded-3xl shadow-xl hover:bg-[#cb6f53d3] transition delay-250 duration-[3000] ease-in">
                           <FaTrashCan className="" />
                         </button>
                       </div>

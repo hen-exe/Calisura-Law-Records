@@ -4,6 +4,7 @@ import { IoMdPerson } from 'react-icons/io';
 import config from '../../common/config';
 import Danger from '../../components/alerts/error';
 import Success from '../../components/alerts/success';
+import { useNavigate } from 'react-router-dom';
 
 interface ClientDetailsProps {
   client_id: number;
@@ -21,16 +22,19 @@ interface DeleteClientProps {
 const DeleteClient: React.FC<DeleteClientProps> = ({ client, closeModal }) => {
   const [errMess, setErrMess] = useState<string>('');
   const [errStatus, setErrStatus] = useState<string>('');
+  const Navigate = useNavigate();
 
   const handleDelete = async () => {
     try {
       if (client) {
         const res = await axios.put(`${config.API}/user/deleteClient?client_id=${client.client_id}`);
         if (res.data.success) {
-          setErrMess('Client deleted! Please refresh the page.');
+          setErrMess('Client deleted!');
           setErrStatus('true');
+
           setTimeout(() => {
             closeModal();
+            window.location.reload();
           }, 2500); 
         } else {
           setErrStatus(res.data.error);
