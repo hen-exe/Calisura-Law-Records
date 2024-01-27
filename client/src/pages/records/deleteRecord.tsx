@@ -4,6 +4,7 @@ import { IoNewspaperSharp } from "react-icons/io5";
 import config from '../../common/config';
 import Danger from '../../components/alerts/error';
 import Success from '../../components/alerts/success';
+import { useNavigate } from 'react-router-dom';
 
 interface RecordDetailsProps {
   record_id: number;
@@ -26,6 +27,7 @@ interface DeleteRecordProps {
 const DeleteRecord: React.FC<DeleteRecordProps> = ({ record, closeModal }) => {
   const [errMess, setErrMess] = useState<string>('');
   const [errStatus, setErrStatus] = useState<string>('');
+  const Navigate = useNavigate();
 
   const handleDelete = async () => {
     try {
@@ -33,13 +35,13 @@ const DeleteRecord: React.FC<DeleteRecordProps> = ({ record, closeModal }) => {
         const res = await axios.post(`${config.API}/records/deleteRecord?record_id=${record.record_id}`);
 
         if (res.data.success) {
-          setErrMess('Record deleted! Please refresh the page.');
+          setErrMess('Record deleted!');
           setErrStatus('true');
-          console.log(res.data.message) 
-
           updateClientTransactions(record?.client_id);
+
           setTimeout(() => {
             closeModal();
+            window.location.reload();
           }, 2500); 
         }
       } else {

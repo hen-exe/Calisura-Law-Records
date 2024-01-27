@@ -26,7 +26,8 @@ const NewRecord: React.FC<NewRecordProps> = ({ closeModal, client_id, onNewRecor
   const [errStatus, setErrStatus] = useState<string>('');
 
 
-  const submitHandler = async (event: FormEvent) => {
+  const submitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     try {
       if (
         date === '' && 
@@ -56,6 +57,7 @@ const NewRecord: React.FC<NewRecordProps> = ({ closeModal, client_id, onNewRecor
 
             setTimeout(() => {
               closeModal();
+              window.location.reload();
             }, 2500);
           }else {
             setErrMess('Unsuccessful create operation. Please try again.');
@@ -84,7 +86,7 @@ const NewRecord: React.FC<NewRecordProps> = ({ closeModal, client_id, onNewRecor
             </div>
 
         {/* Form */}
-        <form>
+        <form onSubmit={submitHandler}>
             <div className='flex'>
                 <div className=''>
                     <div className="w-full flex mt-[2%] py-6 px-12 font-istok text-[1.7em]">
@@ -154,7 +156,7 @@ const NewRecord: React.FC<NewRecordProps> = ({ closeModal, client_id, onNewRecor
 
               <div className="mt-[5%] ml-[83%]">
                 <button
-                  onClick={submitHandler}
+                  type="submit"
                   className="w-[7vw] flex justify-center text-[1.3em] p-2 rounded-xl shadow-xl text-[#595959] bg-[#cbc553ca] hover:text-white hover:bg-[#cbc553ca]  transition-colors delay-250 duration-[3000] ease-in"
                 >
                   <p className="ml-[5%]"> Save </p>

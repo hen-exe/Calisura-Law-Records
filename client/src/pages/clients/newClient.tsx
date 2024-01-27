@@ -15,7 +15,8 @@ const NewClient: React.FC<NewClientProps> = ({ closeModal}) => {
   const [errMess, setErrMess] = useState<string>('');
   const [errStatus, setErrStatus] = useState<string>('');
 
-  const submitHandler = async (event: FormEvent) => {
+  const submitHandler = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     try {
       if (clientName === '' && contactNum === '') {
         setErrMess('All fields are required!');
@@ -30,6 +31,7 @@ const NewClient: React.FC<NewClientProps> = ({ closeModal}) => {
 
             setTimeout(() => {
               closeModal();
+              window.location.reload();
             }, 2500);
           }else {
             setErrMess('Unsuccessful create operation. Please try again.');
@@ -59,7 +61,7 @@ const NewClient: React.FC<NewClientProps> = ({ closeModal}) => {
             </div>
 
             {/* Form */}
-            <form>
+            <form onSubmit={submitHandler}>
               <div className="w-full flex mt-[2%] py-6 px-12 font-istok text-[1.7em]">
                 <p className="text-[#595959]">Full Name</p>
                 <input
@@ -87,7 +89,7 @@ const NewClient: React.FC<NewClientProps> = ({ closeModal}) => {
               {/* Button */}
               <div className="ml-[75%] mt-[15%]">
                 <button
-                  onClick={submitHandler}
+                  type="submit"
                   className="w-[7vw] flex justify-center text-[1.3em] p-2 rounded-xl shadow-xl text-[#595959] bg-[#cbc553ca] hover:text-white hover:bg-[#cbc553ca]  transition-colors delay-250 duration-[3000] ease-in"
                 >
                   <p className="ml-[5%]"> Save </p>
